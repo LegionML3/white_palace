@@ -1,4 +1,4 @@
-// Showcase interactions and search behavior.
+// Showcase and catalog interactions.
 const globeArt = document.getElementById("globeArt");
 const outlineWord = document.getElementById("outlineWord");
 const productName = document.getElementById("productName");
@@ -6,80 +6,157 @@ const variantName = document.getElementById("variantName");
 const price = document.getElementById("price");
 const counterCurrent = document.getElementById("counterCurrent");
 const counterTotal = document.getElementById("counterTotal");
-const tabs = [...document.querySelectorAll(".tab")];
-const navButtons = [...document.querySelectorAll(".nav-box")];
+const heroTabs = document.getElementById("heroTabs");
+const productGrid = document.getElementById("productGrid");
+const catalogCount = document.getElementById("catalogCount");
 const hero = document.getElementById("hero");
+const themeFilters = [...document.querySelectorAll(".nav-box")];
+const versionButtons = [...document.querySelectorAll(".version-button")];
 const searchButton = document.querySelector(".search");
 const searchPanel = document.getElementById("searchPanel");
 const globeSearch = document.getElementById("globeSearch");
 
-const globeRenderers = [penguinSvg, snowmanSvg, reindeerSvg, treeSvg];
+const themeRenderers = {
+  Penguin: penguinSvg,
+  Santa: santaSvg,
+  Star: starSvg,
+  Reindeer: reindeerSvg,
+  Elf: elfSvg,
+  Snowman: snowmanSvg,
+  "Christmas Tree": christmasTreeSvg
+};
+
+let currentTheme = "Penguin";
 let currentIndex = 0;
-let autoTimer = null;
+let themeFilter = "All";
+let versionFilter = "All";
 let paused = false;
+let autoTimer = null;
 
 counterTotal.textContent = String(products.length).padStart(2, "0");
 
-function renderProduct(index) {
-  const product = products[index];
-  if (!product) return;
+function formatMoney(value) {
+  return `$${value.toFixed(2)}`;
+}
 
+function renderHeroProduct(product) {
+  if (!product) return;
   globeArt.classList.add("changing");
   outlineWord.classList.add("changing");
 
   window.setTimeout(() => {
     productName.textContent = product.name;
     outlineWord.textContent = product.outline;
-    variantName.textContent = product.variant;
-    price.textContent = product.price;
-    counterCurrent.textContent = String(index + 1).padStart(2, "0");
-
+    variantName.textContent = `${product.edition} · ${product.version}${product.version === "Premium" ? " (with Tree)" : ""}`;
+    price.textContent = formatMoney(product.price);
+    counterCurrent.textContent = String(currentIndex + 1).padStart(2, "0");
     globeArt.innerHTML = product.image
       ? `<img src="${product.image}" alt="${product.alt}">`
-      : globeRenderers[index]();
-
+      : themeRenderers[product.theme](product.version === "Premium");
     globeArt.classList.remove("changing");
     outlineWord.classList.remove("changing");
   }, 220);
+}
 
-  tabs.forEach((tab, tabIndex) => {
-    const active = tabIndex === index;
+function selectTheme(theme) {
+  currentTheme = theme;
+  const product = products.find((item) => item.theme === theme && item.version === "Standard");
+  currentIndex = products.indexOf(product);
+  renderHeroProduct(product);
+
+  [...heroTabs.querySelectorAll(".tab")].forEach((tab) => {
+    const active = tab.dataset.theme === theme;
     tab.classList.toggle("active", active);
     tab.setAttribute("aria-selected", String(active));
   });
-
-  navButtons.forEach((button) => {
-    const isAll = button.textContent.trim() === "All globes";
-    button.classList.toggle("active",
-      isAll ? index === 0 : button.dataset.index === String(index)
-    );
-  });
-
-  currentIndex = index;
 }
+
+THEMES.forEach((theme) => {
+  const tab = document.createElement("button");
+  tab.type = "button";
+  tab.className = "tab";
+  tab.dataset.theme = theme;
+  tab.setAttribute("aria-label", `Show ${theme} globes`);
+  tab.innerHTML = `<span>${theme === "Christmas Tree" ? "Tree" : theme}</span>`;
+  tab.addEventListener("click", () => selectTheme(theme));
+  heroTabs.appendChild(tab);
+});
+
+function renderCatalog() {
+  const filtered = products.filter((product) =>
+    (themeFilter === "All" || product.theme === themeFilter) &&
+    (versionFilter === "All" || product.version === versionFilter)
+  );
+
+  catalogCount.textContent = `${filtered.length} ${filtered.length === 1 ? "design" : "designs"}`;
+  productGrid.innerHTML = "";
+
+  if (!filtered.length) {
+    productGrid.innerHTML = `<p class="empty-state">No snow globes match these filters.</p>`;
+    return;
+  }
+
+  filtered.forEach((product) => {
+    const card = document.createElement("article");
+    card.className = "product-card";
+    card.innerHTML = `
+      <div class="card-art" role="button" tabindex="0" aria-label="View ${product.name}, ${product.edition}, ${product.version}">
+        ${themeRenderers[product.theme](product.version === "Premium")}
+      </div>
+      <div class="card-body">
+        <span class="card-theme">${product.theme}</span>
+        <h3 class="card-name">${product.finish}<br>${product.edition}</h3>
+        <div class="card-footer">
+          <span class="card-edition">${product.version}${product.version === "Premium" ? " · with tree" : ""}</span>
+          <span class="card-price">${formatMoney(product.price)}</span>
+        </div>
+      </div>`;
+
+    const showProduct = () => {
+      selectTheme(product.theme);
+      document.getElementById("hero").scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+    card.querySelector(".card-art").addEventListener("click", showProduct);
+    card.querySelector(".card-art").addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        showProduct();
+      }
+    });
+    productGrid.appendChild(card);
+  });
+}
+
+themeFilters.forEach((button) => {
+  button.addEventListener("click", () => {
+    themeFilter = button.dataset.theme;
+    themeFilters.forEach((item) => item.classList.toggle("active", item === button));
+    if (themeFilter !== "All") selectTheme(themeFilter);
+    renderCatalog();
+  });
+});
+
+versionButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    versionFilter = button.dataset.version;
+    versionButtons.forEach((item) => {
+      const active = item === button;
+      item.classList.toggle("active", active);
+      item.setAttribute("aria-pressed", String(active));
+    });
+    renderCatalog();
+  });
+});
 
 function startAutoAdvance() {
   window.clearInterval(autoTimer);
   autoTimer = window.setInterval(() => {
     if (!paused && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      renderProduct((currentIndex + 1) % products.length);
+      const themeIndex = (THEMES.indexOf(currentTheme) + 1) % THEMES.length;
+      selectTheme(THEMES[themeIndex]);
     }
-  }, 6000);
+  }, 7000);
 }
-
-tabs.forEach((tab) => {
-  tab.addEventListener("click", () => {
-    renderProduct(Number(tab.dataset.index));
-    startAutoAdvance();
-  });
-});
-
-navButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    renderProduct(Number(button.dataset.index));
-    startAutoAdvance();
-  });
-});
 
 hero.addEventListener("mouseenter", () => { paused = true; });
 hero.addEventListener("mouseleave", () => { paused = false; });
@@ -88,11 +165,9 @@ hero.addEventListener("focusout", () => { paused = false; });
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "ArrowRight") {
-    renderProduct((currentIndex + 1) % products.length);
-    startAutoAdvance();
+    selectTheme(THEMES[(THEMES.indexOf(currentTheme) + 1) % THEMES.length]);
   } else if (event.key === "ArrowLeft") {
-    renderProduct((currentIndex - 1 + products.length) % products.length);
-    startAutoAdvance();
+    selectTheme(THEMES[(THEMES.indexOf(currentTheme) - 1 + THEMES.length) % THEMES.length]);
   } else if (event.key === "Escape" && searchPanel.classList.contains("open")) {
     closeSearch();
   }
@@ -114,16 +189,53 @@ searchButton.addEventListener("click", () => {
 
 globeSearch.addEventListener("input", () => {
   const query = globeSearch.value.trim().toLowerCase();
-  if (!query) return;
-  const matchIndex = products.findIndex((product) =>
-    `${product.name} ${product.variant}`.toLowerCase().includes(query)
+  themeFilter = "All";
+  versionFilter = "All";
+  versionButtons.forEach((button, index) => {
+    const active = index === 0;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+  themeFilters.forEach((button) => button.classList.toggle("active", button.dataset.theme === "All"));
+
+  if (!query) {
+    renderCatalog();
+    return;
+  }
+
+  const filtered = products.filter((product) =>
+    `${product.theme} ${product.edition} ${product.finish} ${product.version}`.toLowerCase().includes(query)
   );
-  if (matchIndex >= 0) renderProduct(matchIndex);
+  catalogCount.textContent = `${filtered.length} ${filtered.length === 1 ? "design" : "designs"}`;
+  productGrid.innerHTML = filtered.length
+    ? ""
+    : `<p class="empty-state">No snow globes match "${globeSearch.value}".</p>`;
+
+  filtered.forEach((product) => {
+    const card = document.createElement("article");
+    card.className = "product-card";
+    card.innerHTML = `
+      <div class="card-art">${themeRenderers[product.theme](product.version === "Premium")}</div>
+      <div class="card-body">
+        <span class="card-theme">${product.theme}</span>
+        <h3 class="card-name">${product.finish}<br>${product.edition}</h3>
+        <div class="card-footer">
+          <span class="card-edition">${product.version}${product.version === "Premium" ? " · with tree" : ""}</span>
+          <span class="card-price">${formatMoney(product.price)}</span>
+        </div>
+      </div>`;
+    card.querySelector(".card-art").addEventListener("click", () => {
+      selectTheme(product.theme);
+      hero.scrollIntoView({ behavior: "smooth" });
+    });
+    productGrid.appendChild(card);
+  });
 });
 
 document.getElementById("contact").addEventListener("click", () => {
   document.querySelector(".utility-links a:last-child").focus();
 });
 
-globeArt.innerHTML = penguinSvg();
+selectTheme("Penguin");
+renderCatalog();
 startAutoAdvance();

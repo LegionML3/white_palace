@@ -5,50 +5,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#F7FBFF">
   <title>White Palace | Handmade Snow Globes</title>
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Federo&family=Mulish:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
   <div class="page-snow" aria-hidden="true">
     <i style="--left:3%;--size:3px;--duration:13s;--delay:-4s;--drift:25px"></i>
-    <i style="--left:9%;--size:5px;--duration:11s;--delay:-8s;--drift:-18px"></i>
-    <i style="--left:15%;--size:3px;--duration:15s;--delay:-2s;--drift:34px"></i>
-    <i style="--left:21%;--size:4px;--duration:10s;--delay:-7s;--drift:-22px"></i>
-    <i style="--left:28%;--size:3px;--duration:14s;--delay:-10s;--drift:16px"></i>
-    <i style="--left:34%;--size:5px;--duration:9s;--delay:-3s;--drift:-30px"></i>
-    <i style="--left:41%;--size:3px;--duration:16s;--delay:-12s;--drift:28px"></i>
-    <i style="--left:48%;--size:4px;--duration:12s;--delay:-5s;--drift:-15px"></i>
-    <i style="--left:55%;--size:3px;--duration:14s;--delay:-9s;--drift:33px"></i>
-    <i style="--left:62%;--size:5px;--duration:10s;--delay:-1s;--drift:-26px"></i>
-    <i style="--left:69%;--size:3px;--duration:15s;--delay:-6s;--drift:20px"></i>
-    <i style="--left:76%;--size:4px;--duration:12s;--delay:-11s;--drift:-34px"></i>
-    <i style="--left:83%;--size:3px;--duration:9s;--delay:-4s;--drift:27px"></i>
-    <i style="--left:91%;--size:5px;--duration:14s;--delay:-8s;--drift:-19px"></i>
-    <i style="--left:97%;--size:3px;--duration:11s;--delay:-2s;--drift:30px"></i>
+    <i style="--left:11%;--size:5px;--duration:11s;--delay:-8s;--drift:-18px"></i>
+    <i style="--left:20%;--size:3px;--duration:15s;--delay:-2s;--drift:34px"></i>
+    <i style="--left:29%;--size:4px;--duration:10s;--delay:-7s;--drift:-22px"></i>
+    <i style="--left:38%;--size:3px;--duration:14s;--delay:-10s;--drift:16px"></i>
+    <i style="--left:47%;--size:5px;--duration:9s;--delay:-3s;--drift:-30px"></i>
+    <i style="--left:56%;--size:3px;--duration:16s;--delay:-12s;--drift:28px"></i>
+    <i style="--left:65%;--size:4px;--duration:12s;--delay:-5s;--drift:-15px"></i>
+    <i style="--left:74%;--size:3px;--duration:14s;--delay:-9s;--drift:33px"></i>
+    <i style="--left:83%;--size:5px;--duration:10s;--delay:-1s;--drift:-26px"></i>
+    <i style="--left:92%;--size:3px;--duration:15s;--delay:-6s;--drift:20px"></i>
   </div>
 
   <header class="topbar">
     <a class="brand" href="#" aria-label="White Palace home">
       <span class="brand-name">White Palace</span>
-      <span class="brand-slogan">A palace of white.</span>
+      <span class="brand-slogan">A palace of white beyond the glass of frosted white</span>
     </a>
 
-    <nav class="category-nav" aria-label="Globe categories">
-      <button class="nav-box active" type="button" data-index="0">All globes</button>
-      <button class="nav-box" type="button" data-index="0">Penguin</button>
-      <button class="nav-box" type="button" data-index="1">Snowman</button>
-      <button class="nav-box" type="button" data-index="2">Reindeer</button>
-      <button class="nav-box" type="button" data-index="3">Tree</button>
+    <nav class="category-nav" aria-label="Globe categories" id="themeFilters">
+      <button class="nav-box active" type="button" data-theme="All">All globes</button>
+      <button class="nav-box" type="button" data-theme="Penguin">Penguin</button>
+      <button class="nav-box" type="button" data-theme="Santa">Santa</button>
+      <button class="nav-box" type="button" data-theme="Star">Star</button>
+      <button class="nav-box" type="button" data-theme="Reindeer">Reindeer</button>
+      <button class="nav-box" type="button" data-theme="Elf">Elf</button>
+      <button class="nav-box" type="button" data-theme="Snowman">Snowman</button>
+      <button class="nav-box" type="button" data-theme="Christmas Tree">Tree</button>
     </nav>
 
     <div class="utility">
       <nav class="utility-links" aria-label="Utility navigation">
-        <a href="#find">Find us</a>
-        <a href="#gifts">Gift ideas</a>
+        <a href="#catalog">Find us</a>
+        <a href="#catalog">Gift ideas</a>
         <a href="#contact">Contact</a>
       </nav>
       <button class="search" type="button" aria-label="Search snow globes" aria-expanded="false" aria-controls="searchPanel">
@@ -62,7 +59,7 @@
 
   <div class="search-panel" id="searchPanel" role="search" aria-hidden="true">
     <label for="globeSearch">Search the collection</label>
-    <input id="globeSearch" type="search" placeholder="Penguin, snowman, reindeer...">
+    <input id="globeSearch" type="search" placeholder="Theme, finish or edition">
   </div>
 
   <main>
@@ -73,23 +70,14 @@
       <svg class="corner-snowflake top" viewBox="0 0 100 100" fill="none" aria-hidden="true">
         <g stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
           <path d="M50 8v84M14 29l72 42M14 71l72-42"/>
-          <path d="M50 19l-8 8m8-8l8 8M50 81l-8-8m8 8l8-8M21 34l11 1m-11-1l5-10M79 66l-11-1m11 1l-5 10M21 66l11-1m-11 1l5 10M79 34l-11 1m11-1l-5-10"/>
-        </g>
-      </svg>
-      <svg class="corner-snowflake bottom" viewBox="0 0 100 100" fill="none" aria-hidden="true">
-        <g stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-          <path d="M50 8v84M14 29l72 42M14 71l72-42"/>
           <path d="M50 19l-8 8m8-8l8 8M50 81l-8-8m8 8l8-8M21 34l11 1m-11-1l5-10M79 66l-11-1m11 1l-5 10"/>
         </g>
       </svg>
 
-      <svg class="sparkle one" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1c.8 5.7 3.3 8.2 9 9-5.7.8-8.2 3.3-9 9-.8-5.7-3.3-8.2-9-9 5.7-.8 8.2-3.3 9-9z" fill="#8FC4EE"/></svg>
-      <svg class="sparkle two" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1c.8 5.7 3.3 8.2 9 9-5.7.8-8.2 3.3-9 9-.8-5.7-3.3-8.2-9-9 5.7-.8 8.2-3.3 9-9z" fill="#8FC4EE"/></svg>
-      <svg class="sparkle three" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1c.8 5.7 3.3 8.2 9 9-5.7.8-8.2 3.3-9 9-.8-5.7-3.3-8.2-9-9 5.7-.8 8.2-3.3 9-9z" fill="#8FC4EE"/></svg>
-
       <div class="hero-label">A closer look</div>
       <h1 class="headline">A palace<br>of white.</h1>
-      <div class="counter" aria-live="polite"><span id="counterCurrent">01</span> / <span id="counterTotal">04</span></div>
+      <p class="hero-slogan">A palace of white beyond the glass of frosted white</p>
+      <div class="counter" aria-live="polite"><span id="counterCurrent">01</span> / <span id="counterTotal">45</span></div>
 
       <h2 class="outline-word" id="outlineWord" aria-hidden="true">PENGUIN</h2>
 
@@ -102,44 +90,35 @@
       <div class="product-info">
         <span class="product-name" id="productName">Penguin</span>
         <div class="product-meta">
-          <span class="variant" id="variantName">Frosted White</span>
-          <span class="price" id="price">$5</span>
+          <span class="variant" id="variantName">Frosted White · Standard</span>
+          <span class="price" id="price">$5.00</span>
         </div>
-        <a class="explore" href="#" id="exploreLink">Explore this style <span aria-hidden="true">↗</span></a>
+        <a class="explore" href="#catalog">Explore this style <span aria-hidden="true">↗</span></a>
       </div>
 
       <div class="bottom-area">
-        <nav class="tabs" aria-label="Choose a snow globe">
-          <button class="tab active" type="button" data-index="0" aria-selected="true"><span>Penguin</span></button>
-          <button class="tab" type="button" data-index="1" aria-selected="false"><span>Snowman</span></button>
-          <button class="tab" type="button" data-index="2" aria-selected="false"><span>Reindeer</span></button>
-          <button class="tab" type="button" data-index="3" aria-selected="false"><span>Christmas Tree</span></button>
-        </nav>
-        <a class="view-all" href="#">View all globes <span aria-hidden="true">↗</span></a>
+        <nav class="tabs" id="heroTabs" aria-label="Choose a featured snow globe"></nav>
       </div>
     </section>
 
-    <section class="features" aria-label="Product benefits">
-      <article class="feature-card">
-        <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
-          <path d="M24 6l11 5v9c0 9-4.8 15-11 17-6.2-2-11-8-11-17v-9l11-5z" stroke="currentColor" stroke-width="2"/>
-          <path d="M17 24l5 5 9-11" stroke="#8A6420" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <div><strong>Handmade with care</strong><span>Made slowly, packed gently</span></div>
-      </article>
-      <article class="feature-card">
-        <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
-          <path d="M8 20h32v20H8zM6 15h36v7H6zM24 15v25M24 15c-7-1-9-7-5-9 4-2 5 3 5 9zm0 0c7-1 9-7 5-9-4-2-5 3-5 9z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-        </svg>
-        <div><strong>Gift-ready packaging</strong><span>Beautiful from the first look</span></div>
-      </article>
-      <article class="feature-card">
-        <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
-          <path d="M15 40V14h18v26M11 14h26M18 9h12v5H18z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-          <path d="M24 20v14M17 27h14" stroke="#8A6420" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-        <div><strong>Add a name tag</strong><span>Personalise for +$1</span></div>
-      </article>
+    <section class="catalog" id="catalog" aria-labelledby="catalogTitle">
+      <div class="catalog-heading">
+        <div>
+          <p class="eyebrow">The full collection</p>
+          <h2 id="catalogTitle">Find your snow globe</h2>
+        </div>
+        <p class="catalog-count" id="catalogCount" aria-live="polite">45 designs</p>
+      </div>
+
+      <div class="catalog-controls">
+        <div class="version-toggle" aria-label="Filter by globe version">
+          <button type="button" class="version-button active" data-version="All" aria-pressed="true">All editions</button>
+          <button type="button" class="version-button" data-version="Standard" aria-pressed="false">Standard</button>
+          <button type="button" class="version-button" data-version="Premium" aria-pressed="false">Premium · with tree</button>
+        </div>
+      </div>
+
+      <div class="product-grid" id="productGrid"></div>
     </section>
   </main>
 
