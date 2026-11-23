@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#F7FBFF">
+  <title>Snow Globe | White Palace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Federo&family=Mulish:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="product.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html" aria-label="White Palace home">
+      <span class="brand-name">White Palace</span>
+      <span class="brand-slogan">A palace of white beyond the glass of frosted white</span>
+    </a>
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="index.html">Catalog</a><span>/</span><span id="breadcrumbTheme">Snow globe</span>
+    </nav>
+  </header>
+
+  <main class="product-page">
+    <section class="media-column" aria-label="Snow globe 3D gallery">
+      <div class="viewer" id="viewer">
+        <canvas id="globeCanvas" aria-label="Interactive 3D snow globe"></canvas>
+        <div class="viewer-tools">
+          <button type="button" id="zoomOut" aria-label="Zoom out">−</button>
+          <button type="button" id="resetCamera" aria-label="Reset 3D camera">↻</button>
+          <button type="button" id="zoomIn" aria-label="Zoom in">+</button>
+        </div>
+        <span class="viewer-caption" id="viewerCaption">3D View</span>
+      </div>
+
+      <div class="media-strip" role="list" aria-label="Product views">
+        <button class="thumb active" type="button" data-view="full" role="listitem"><span class="thumb-symbol">●</span>3D View</button>
+        <button class="thumb" type="button" data-view="inside" role="listitem"><span class="thumb-symbol">✦</span>Inside Globe</button>
+        <button class="thumb" type="button" data-view="base" role="listitem"><span class="thumb-symbol">▣</span>Base &amp; Detail</button>
+        <button class="thumb" type="button" data-view="winter" role="listitem"><span class="thumb-symbol">❄</span>Winter Scene</button>
+      </div>
+    </section>
+
+    <section class="product-details" aria-labelledby="productTitle">
+      <span class="theme-badge" id="themeBadge">Penguin</span>
+      <h1 id="productTitle">Penguin · Frosted Snow Globe</h1>
+      <div class="rating">
+        <span class="stars" aria-label="5 out of 5 stars">★★★★★</span>
+        <span>White Palace Collection</span>
+        <span class="availability">In stock</span>
+      </div>
+      <p class="price" id="mainPrice">$5.00</p>
+
+      <fieldset class="option-group">
+        <legend>Edition</legend>
+        <div class="option-row" id="versionOptions">
+          <button class="option-button active" type="button" data-version="Standard" aria-pressed="true">Standard</button>
+          <button class="option-button" type="button" data-version="Premium" aria-pressed="false">Premium + Tree</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="option-group">
+        <legend>Finish</legend>
+        <select class="option-select" id="editionSelect" aria-label="Choose finish">
+          <option value="Frosted">Frosted</option>
+          <option value="Classic">Classic</option>
+          <option value="Heirloom">Heirloom</option>
+          <option value="Midnight">Midnight</option>
+        </select>
+      </fieldset>
+
+      <fieldset class="option-group">
+        <legend>Choose another design</legend>
+        <select class="option-select" id="productSwitcher" aria-label="Choose another product"></select>
+      </fieldset>
+
+      <ul class="highlights">
+        <li>Handmade glass globe with a frosted crystal finish</li>
+        <li>Gentle snow chamber and sculpted winter character</li>
+        <li>Gift-ready presentation box included</li>
+        <li>Choose Standard or Premium with an internal evergreen tree</li>
+      </ul>
+    </section>
+
+    <aside class="order-card" aria-label="Order options">
+      <p class="order-price" id="orderPrice">$5.00</p>
+      <p class="delivery"><strong>Shipping:</strong><br>Market pickup or winter delivery available.</p>
+      <span class="stock">In stock and ready to reserve</span>
+      <div class="quantity-row">
+        <label for="quantity">Quantity</label>
+        <select id="quantity">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+      </div>
+      <button class="reserve-button" type="button" id="reserveButton">Add to Order / Reserve</button>
+      <a class="browse-link" href="index.html#catalog">Browse all 45 designs ↗</a>
+    </aside>
+  </main>
+
+  <script src="data.js"></script>
+  <script type="module" src="product-3d.js"></script>
+</body>
+</html>

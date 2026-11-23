@@ -75,8 +75,8 @@
       </svg>
 
       <div class="hero-label">A closer look</div>
-      <h1 class="headline">A palace<br>of white.</h1>
-      <p class="hero-slogan">A palace of white beyond the glass of frosted white</p>
+      <h1 class="headline">Made for<br>winter wonder.</h1>
+      <p class="hero-slogan">Handmade snow globes, in glass and frosted white.</p>
       <div class="counter" aria-live="polite"><span id="counterCurrent">01</span> / <span id="counterTotal">45</span></div>
 
       <h2 class="outline-word" id="outlineWord" aria-hidden="true">PENGUIN</h2>
@@ -98,14 +98,19 @@
 
       <div class="bottom-area">
         <nav class="tabs" id="heroTabs" aria-label="Choose a featured snow globe"></nav>
+        <div class="hero-actions">
+          <button type="button" id="previousProduct" aria-label="Previous snow globe">←</button>
+          <button type="button" id="nextProduct" aria-label="Next snow globe">→</button>
+        </div>
       </div>
     </section>
 
     <section class="catalog" id="catalog" aria-labelledby="catalogTitle">
       <div class="catalog-heading">
         <div>
-          <p class="eyebrow">The full collection</p>
-          <h2 id="catalogTitle">Find your snow globe</h2>
+          <p class="eyebrow">Curated for every winter story</p>
+          <h2 id="catalogTitle">Find the perfect snow globe</h2>
+          <p class="catalog-intro">Choose a theme and edition, or browse the complete collection at your own pace.</p>
         </div>
         <p class="catalog-count" id="catalogCount" aria-live="polite">45 designs</p>
       </div>
@@ -119,6 +124,7 @@
       </div>
 
       <div class="product-grid" id="productGrid"></div>
+      <button class="load-more" id="loadMore" type="button">Show more designs</button>
     </section>
   </main>
 

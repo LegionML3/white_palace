@@ -1,0 +1,127 @@
+:root {
+  --page:#f7fbff; --white:#fff; --navy:#264b68; --slate:#35536a;
+  --ice:#4f86af; --pale:#ddeefc; --border:#d9e9f6; --gold:#9a7022;
+}
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { margin:0; min-width:320px; background:var(--page); color:var(--slate); font-family:"Mulish",Arial,sans-serif; }
+button,select,input { font:inherit; }
+a { color:inherit; text-decoration:none; }
+:focus-visible { outline:3px solid rgba(79,134,175,.55); outline-offset:3px; }
+
+.topbar {
+  height:82px; display:flex; align-items:center; padding:0 28px; border-bottom:1px solid var(--border);
+  background:rgba(255,255,255,.96);
+}
+.brand { display:flex; flex-direction:column; min-width:220px; }
+.brand-name { color:var(--navy); font-family:"Federo",Georgia,serif; font-size:27px; line-height:1; }
+.brand-slogan { margin-top:7px; color:var(--slate); font-size:8px; }
+.breadcrumb { margin-left:auto; display:flex; gap:8px; color:var(--slate); font-size:13px; }
+.breadcrumb a { color:var(--navy); font-weight:800; }
+
+.product-page {
+  max-width:1440px; margin:32px auto 80px; padding:0 24px;
+  display:grid; grid-template-columns:minmax(420px,1.25fr) minmax(300px,.78fr) 290px; gap:24px;
+  align-items:start;
+}
+.media-column { min-width:0; }
+.viewer {
+  position:relative; height:620px; border:1px solid var(--border); border-radius:18px;
+  overflow:hidden; background:radial-gradient(circle at 50% 42%,#fff 0,#eef7fd 68%,#dfeefa 100%);
+}
+#globeCanvas { width:100%; height:100%; display:block; cursor:grab; }
+#globeCanvas:active { cursor:grabbing; }
+.viewer-tools {
+  position:absolute; right:14px; top:14px; display:flex; gap:6px;
+}
+.viewer-tools button, .thumb {
+  border:1px solid var(--border); background:rgba(255,255,255,.94); color:var(--navy); cursor:pointer;
+}
+.viewer-tools button { width:42px; height:42px; border-radius:50%; }
+.viewer-tools button:hover, .thumb.active { border-color:var(--ice); background:var(--pale); }
+.viewer-caption {
+  position:absolute; left:16px; bottom:14px; border-radius:18px; padding:8px 12px;
+  background:rgba(255,255,255,.92); color:var(--navy); font-size:12px; font-weight:800;
+}
+.media-strip {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:10px;
+}
+.thumb { height:86px; border-radius:10px; padding:8px; font-size:11px; font-weight:800; }
+.thumb-symbol {
+  display:block; height:44px; margin-bottom:4px; color:var(--ice); font-family:"Federo",Georgia,serif; font-size:25px;
+}
+
+.product-details { padding:8px 4px 0; }
+.theme-badge {
+  display:inline-block; margin-bottom:10px; padding:6px 9px; border:1px solid var(--border);
+  border-radius:20px; background:#edf6fd; color:var(--navy); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px;
+}
+.product-details h1 { margin:0; color:var(--navy); font-family:"Federo",Georgia,serif; font-size:38px; line-height:1.05; }
+.rating { display:flex; align-items:center; gap:8px; margin:10px 0 16px; color:var(--slate); font-size:13px; }
+.stars { color:var(--gold); letter-spacing:1px; }
+.availability { color:#2d7261; font-weight:800; }
+.price { margin:0 0 20px; color:var(--gold); font-family:"Federo",Georgia,serif; font-size:32px; }
+.option-group { margin:0 0 18px; border:0; padding:0; }
+.option-group legend { margin-bottom:8px; color:var(--navy); font-size:13px; font-weight:800; }
+.option-row { display:flex; flex-wrap:wrap; gap:7px; }
+.option-button {
+  min-height:42px; border:1px solid var(--border); border-radius:8px; background:var(--white);
+  color:var(--slate); padding:0 12px; font-size:12px; font-weight:800; cursor:pointer;
+}
+.option-button.active { border:2px solid var(--navy); color:var(--navy); background:#edf6fd; }
+.option-select {
+  width:100%; height:44px; border:1px solid var(--border); border-radius:8px; background:var(--white);
+  color:var(--navy); padding:0 11px;
+}
+.highlights { margin:20px 0 0; padding:18px 18px 18px 34px; border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
+.highlights li { margin:7px 0; color:var(--slate); font-size:13px; }
+
+.order-card {
+  position:sticky; top:24px; border:1px solid var(--border); border-radius:16px; background:var(--white);
+  padding:18px; box-shadow:0 14px 36px rgba(63,127,181,.08);
+}
+.order-price { margin:0 0 10px; color:var(--gold); font-family:"Federo",Georgia,serif; font-size:28px; }
+.delivery { margin:0 0 12px; color:var(--slate); line-height:1.55; font-size:13px; }
+.stock { display:block; margin-bottom:14px; color:#2d7261; font-size:13px; font-weight:800; }
+.quantity-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.quantity-row label { color:var(--navy); font-size:13px; font-weight:800; }
+.quantity-row select { height:40px; min-width:82px; border:1px solid var(--border); border-radius:8px; background:var(--white); color:var(--navy); }
+.reserve-button {
+  width:100%; height:48px; border:0; border-radius:24px; background:var(--navy); color:#fff;
+  font-size:13px; font-weight:800; cursor:pointer;
+}
+.reserve-button:hover { background:var(--ice); }
+.browse-link { display:block; margin-top:14px; text-align:center; color:var(--navy); font-size:13px; font-weight:800; }
+
+.no-webgl {
+  height:100%; display:grid; place-items:center; text-align:center; padding:30px;
+  color:var(--navy);
+}
+
+@media (max-width:1180px) {
+  .product-page { grid-template-columns:minmax(380px,1fr) minmax(280px,.8fr); }
+  .order-card { grid-column:2; }
+}
+@media (max-width:850px) {
+  .topbar { height:auto; min-height:70px; padding:12px 16px; }
+  .brand { min-width:170px; }
+  .brand-name { font-size:23px; }
+  .breadcrumb { display:none; }
+  .product-page { grid-template-columns:1fr; padding:0 16px; margin-top:16px; }
+  .viewer { height:min(520px,70vw); }
+  .order-card { position:static; grid-column:auto; }
+  .product-details { padding:4px 2px; }
+}
+@media (max-width:480px) {
+  .brand-slogan { max-width:160px; }
+  .viewer { height:390px; }
+  .media-strip { gap:5px; }
+  .thumb { height:78px; font-size:9px; padding:5px; }
+  .thumb-symbol { height:38px; }
+  .product-details h1 { font-size:32px; }
+  .option-row { display:grid; grid-template-columns:1fr 1fr; }
+  .option-button { padding:0 7px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  html { scroll-behavior:auto; }
+}

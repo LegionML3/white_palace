@@ -7,6 +7,9 @@
  */
 const BASE_GLOBE_PRICE = 5;
 const PREMIUM_TREE_UPCHARGE = 2;
+// Product-detail compatible aliases for the centralized pricing API.
+const STANDARD_PRICE = BASE_GLOBE_PRICE;
+const CURRENCY = "USD";
 const EDITION_OVERRIDES = {
   "Frosted": 0,
   "Classic": 1,
@@ -18,19 +21,23 @@ const THEMES = ["Penguin", "Santa", "Star", "Reindeer", "Elf", "Snowman", "Chris
 const EDITIONS = ["Frosted", "Classic", "Heirloom"];
 
 const THEME_DETAILS = {
-  Penguin: { outline: "PENGUIN", finish: "Polar pearl", accent: "#d9b85f" },
-  Santa: { outline: "SANTA", finish: "Holiday red", accent: "#a33a34" },
-  Star: { outline: "STAR", finish: "Starlight gold", accent: "#d9b85f" },
-  Reindeer: { outline: "REINDEER", finish: "Woodland white", accent: "#b88770" },
-  Elf: { outline: "ELF", finish: "Evergreen mist", accent: "#668f7f" },
-  Snowman: { outline: "SNOWMAN", finish: "Classic snow", accent: "#6f95b1" },
-  "Christmas Tree": { outline: "TREE", finish: "Pine and pearl", accent: "#557f71" }
+  Penguin: { slug: "penguin", outline: "PENGUIN", finish: "Polar pearl", accent: "#d9b85f" },
+  Santa: { slug: "santa", outline: "SANTA", finish: "Holiday red", accent: "#a33a34" },
+  Star: { slug: "star", outline: "STAR", finish: "Starlight gold", accent: "#d9b85f" },
+  Reindeer: { slug: "reindeer", outline: "REINDEER", finish: "Woodland white", accent: "#b88770" },
+  Elf: { slug: "elf", outline: "ELF", finish: "Evergreen mist", accent: "#668f7f" },
+  Snowman: { slug: "snowman", outline: "SNOWMAN", finish: "Classic snow", accent: "#6f95b1" },
+  "Christmas Tree": { slug: "christmas-tree", outline: "TREE", finish: "Pine and pearl", accent: "#557f71" }
 };
 
 function formatPrice(theme, edition, version) {
   const editionOverride = EDITION_OVERRIDES[edition] || 0;
   const premium = version === "Premium" ? PREMIUM_TREE_UPCHARGE : 0;
   return BASE_GLOBE_PRICE + editionOverride + premium;
+}
+
+function calculateProductPrice(product) {
+  return formatPrice(product.theme, product.edition, product.version);
 }
 
 function createCatalog() {

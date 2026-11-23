@@ -30,6 +30,7 @@ let currentTheme = "Penguin";
 let currentIndex = 0;
 let themeFilter = "All";
 let versionFilter = "All";
+let visibleLimit = 9;
 let paused = false;
 let autoTimer = null;
 
@@ -96,13 +97,13 @@ function renderCatalog() {
     return;
   }
 
-  filtered.forEach((product) => {
+  filtered.slice(0, visibleLimit).forEach((product) => {
     const card = document.createElement("article");
     card.className = "product-card";
     card.innerHTML = `
-      <div class="card-art" role="button" tabindex="0" aria-label="View ${product.name}, ${product.edition}, ${product.version}">
+      <a class="card-art" href="product.html?id=${encodeURIComponent(product.id)}" aria-label="View ${product.name}, ${product.edition}, ${product.version}">
         ${themeRenderers[product.theme](product.version === "Premium")}
-      </div>
+      </a>
       <div class="card-body">
         <span class="card-theme">${product.theme}</span>
         <h3 class="card-name">${product.finish}<br>${product.edition}</h3>
@@ -112,24 +113,18 @@ function renderCatalog() {
         </div>
       </div>`;
 
-    const showProduct = () => {
-      selectTheme(product.theme);
-      document.getElementById("hero").scrollIntoView({ behavior: "smooth", block: "start" });
-    };
-    card.querySelector(".card-art").addEventListener("click", showProduct);
-    card.querySelector(".card-art").addEventListener("keydown", (event) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        showProduct();
-      }
-    });
     productGrid.appendChild(card);
   });
+
+  const loadMore = document.getElementById("loadMore");
+  loadMore.classList.toggle("hidden", visibleLimit >= filtered.length);
+  loadMore.textContent = `Show more · ${Math.max(0, filtered.length - visibleLimit)} remaining`;
 }
 
 themeFilters.forEach((button) => {
   button.addEventListener("click", () => {
     themeFilter = button.dataset.theme;
+    visibleLimit = 9;
     themeFilters.forEach((item) => item.classList.toggle("active", item === button));
     if (themeFilter !== "All") selectTheme(themeFilter);
     renderCatalog();
@@ -139,6 +134,7 @@ themeFilters.forEach((button) => {
 versionButtons.forEach((button) => {
   button.addEventListener("click", () => {
     versionFilter = button.dataset.version;
+    visibleLimit = 9;
     versionButtons.forEach((item) => {
       const active = item === button;
       item.classList.toggle("active", active);
@@ -191,6 +187,7 @@ globeSearch.addEventListener("input", () => {
   const query = globeSearch.value.trim().toLowerCase();
   themeFilter = "All";
   versionFilter = "All";
+  visibleLimit = 9;
   versionButtons.forEach((button, index) => {
     const active = index === 0;
     button.classList.toggle("active", active);
@@ -211,11 +208,13 @@ globeSearch.addEventListener("input", () => {
     ? ""
     : `<p class="empty-state">No snow globes match "${globeSearch.value}".</p>`;
 
-  filtered.forEach((product) => {
+  filtered.slice(0, visibleLimit).forEach((product) => {
     const card = document.createElement("article");
     card.className = "product-card";
     card.innerHTML = `
-      <div class="card-art">${themeRenderers[product.theme](product.version === "Premium")}</div>
+      <a class="card-art" href="product.html?id=${encodeURIComponent(product.id)}" aria-label="View ${product.name}, ${product.edition}, ${product.version}">
+        ${themeRenderers[product.theme](product.version === "Premium")}
+      </a>
       <div class="card-body">
         <span class="card-theme">${product.theme}</span>
         <h3 class="card-name">${product.finish}<br>${product.edition}</h3>
@@ -224,16 +223,28 @@ globeSearch.addEventListener("input", () => {
           <span class="card-price">${formatMoney(product.price)}</span>
         </div>
       </div>`;
-    card.querySelector(".card-art").addEventListener("click", () => {
-      selectTheme(product.theme);
-      hero.scrollIntoView({ behavior: "smooth" });
-    });
     productGrid.appendChild(card);
   });
+
+  document.getElementById("loadMore").classList.toggle("hidden", !filtered.length || visibleLimit >= filtered.length);
+  document.getElementById("loadMore").textContent = `Show more · ${Math.max(0, filtered.length - visibleLimit)} remaining`;
 });
 
 document.getElementById("contact").addEventListener("click", () => {
   document.querySelector(".utility-links a:last-child").focus();
+});
+
+document.getElementById("previousProduct").addEventListener("click", () => {
+  selectTheme(THEMES[(THEMES.indexOf(currentTheme) - 1 + THEMES.length) % THEMES.length]);
+});
+
+document.getElementById("nextProduct").addEventListener("click", () => {
+  selectTheme(THEMES[(THEMES.indexOf(currentTheme) + 1) % THEMES.length]);
+});
+
+document.getElementById("loadMore").addEventListener("click", () => {
+  visibleLimit += 9;
+  renderCatalog();
 });
 
 selectTheme("Penguin");
