@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#F7FBFF">
+  <title>White Palace | Handmade Snow Globes</title>
+
+  <!-- Google Fonts: edit these names if you choose different fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Federo&family=Mulish:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================================================
+       EDIT COLOURS HERE
+       ========================================================= */
+    :root {
+      --page: #F7FBFF;
+      --white: #FFFFFF;
+      --text: #3F7FB5;
+      --text-small: #2F6A9C;
+      --accent: #8FC4EE;
+      --pale: #DDEEFC;
+      --border: #E3F1FC;
+      --red: #C62828;
+      --gold: #D9B85F;
+      --nav-height: 82px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: var(--page);
+      color: var(--text);
+      font-family: "Mulish", Arial, sans-serif;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, select, a { font: inherit; }
+    button, a, select { -webkit-tap-highlight-color: transparent; }
+    a { color: inherit; text-decoration: none; }
+
+    :focus-visible {
+      outline: 3px solid rgba(143, 196, 238, 0.72);
+      outline-offset: 3px;
+    }
+
+    /* Falling snow */
+    .page-snow {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .page-snow i {
+      position: absolute;
+      top: -18px;
+      left: var(--left);
+      width: var(--size);
+      height: var(--size);
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 0 7px rgba(143, 196, 238, 0.7);
+      animation: fall var(--duration) linear infinite;
+      animation-delay: var(--delay);
+    }
+
+    .page-snow i:nth-child(3n) { background: rgba(143, 196, 238, 0.72); }
+
+    @keyframes fall {
+      to { transform: translate3d(var(--drift), 105vh, 0) rotate(180deg); }
+    }
+
+    /* =========================================================
+       TOP NAVIGATION
+       ========================================================= */
+    .topbar {
+      position: relative;
+      z-index: 30;
+      height: var(--nav-height);
+      display: flex;
+      align-items: stretch;
+      background: rgba(255, 255, 255, 0.94);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      width: 245px;
+      min-width: 245px;
+      display: grid;
+      align-content: center;
+      justify-content: start;
+      padding: 0 28px;
+      border-right: 1px solid var(--border);
+    }
+
+    .brand-name {
+      color: var(--text);
+      font-family: "Federo", Georgia, serif;
+      font-size: 27px;
+      line-height: 1;
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+    }
+
+    .brand-slogan {
+      max-width: 190px;
+      margin-top: 7px;
+      color: var(--text-small);
+      font-size: 9px;
+      line-height: 1.25;
+      letter-spacing: 0.2px;
+    }
+
+    .category-nav {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 0 18px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .category-nav::-webkit-scrollbar { display: none; }
+
+    .nav-box {
+      height: 42px;
+      padding: 0 14px;
+      border: 1px solid var(--accent);
+      border-radius: 5px;
+      background: var(--white);
+      color: var(--text-small);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: 180ms ease;
+    }
+
+    .nav-box:hover,
+    .nav-box.active {
+      border-color: var(--text);
+      background: var(--pale);
+      color: var(--text-small);
+      transform: translateY(-1px);
+    }
+
+    .utility {
+      margin-left: auto;
+      display: flex;
+      align-items: stretch;
+    }
+
+    .utility-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 0 20px;
+      border-left: 1px solid var(--border);
+    }
+
+    .utility-links a {
+      color: var(--text-small);
+      font-size: 14px;
+      font-weight: 700;
+      white-space: nowrap;
+      transition: color 180ms ease;
+    }
+
+    .utility-links a:hover { color: var(--text); }
+
+    .search {
+      width: 54px;
+      height: 54px;
+      align-self: center;
+      margin-right: 14px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--white);
+      cursor: pointer;
+      font-size: 21px;
+      transition: 180ms ease;
+    }
+
+    .search:hover {
+      background: #74b2e5;
+      transform: rotate(-8deg) scale(1.04);
+    }
+
+    /* =========================================================
+       HERO
+       ========================================================= */
+    .hero {
+      position: relative;
+      z-index: 2;
+      width: calc(100% - 48px);
+      max-width: 1440px;
+      height: 700px;
+      margin: 24px auto 0;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: var(--white);
+      box-shadow: 0 18px 55px rgba(74, 139, 188, 0.08);
+    }
+
+    .hero-circle,
+    .hero-circle-small {
+      position: absolute;
+      z-index: 0;
+      border-radius: 50%;
+      background: rgba(221, 238, 252, 0.55);
+    }
+
+    .hero-circle {
+      width: 390px;
+      height: 390px;
+      right: -110px;
+      top: 110px;
+    }
+
+    .hero-circle-small {
+      width: 180px;
+      height: 180px;
+      left: -80px;
+      bottom: 70px;
+    }
+
+    .corner-snowflake {
+      position: absolute;
+      z-index: 1;
+      width: 150px;
+      height: 150px;
+      color: var(--accent);
+      opacity: 0.14;
+      pointer-events: none;
+    }
+
+    .corner-snowflake.top { top: 72px; right: 44px; }
+    .corner-snowflake.bottom { bottom: 76px; left: 40px; width: 105px; height: 105px; }
+
+    .sparkle {
+      position: absolute;
+      z-index: 1;
+      width: 18px;
+      height: 18px;
+      opacity: 0.5;
+    }
+
+    .sparkle.one { left: 33%; top: 38%; }
+    .sparkle.two { right: 27%; bottom: 31%; width: 12px; height: 12px; }
+    .sparkle.three { left: 18%; bottom: 28%; width: 10px; height: 10px; }
+
+    .hero-label {
+      position: absolute;
+      z-index: 8;
+      top: 34px;
+      left: 42px;
+      color: var(--text-small);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 3.5px;
+    }
+
+    .headline {
+      position: absolute;
+      z-index: 8;
+      top: 78px;
+      left: 42px;
+      max-width: 580px;
+      margin: 0;
+      color: var(--text);
+      font-family: "Federo", Georgia, serif;
+      font-size: clamp(48px, 5.2vw, 78px);
+      line-height: 0.98;
+      font-weight: 400;
+      letter-spacing: -2.5px;
+    }
+
+    .counter {
+      position: absolute;
+      z-index: 8;
+      top: 36px;
+      right: 42px;
+      color: var(--text-small);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
+
+    .counter span:last-child { color: var(--accent); }
+
+    .outline-word {
+      position: absolute;
+      z-index: 1;
+      left: 50%;
+      top: 54%;
+      margin: 0;
+      transform: translate(-50%, -50%);
+      color: transparent;
+      -webkit-text-stroke: 2px rgba(63, 127, 181, 0.055);
+      font-family: "Federo", Georgia, serif;
+      font-size: clamp(150px, 17vw, 260px);
+      line-height: 1;
+      letter-spacing: -10px;
+      text-transform: uppercase;
+      white-space: nowrap;
+      user-select: none;
+      transition: opacity 280ms ease, transform 420ms cubic-bezier(.2,.7,.2,1);
+    }
+
+    .outline-word.changing {
+      opacity: 0;
+      transform: translate(-50%, -44%);
+    }
+
+    .product-stage {
+      position: absolute;
+      z-index: 4;
+      left: 50%;
+      top: 50%;
+      width: 410px;
+      height: 410px;
+      transform: translate(-50%, -43%);
+      display: grid;
+      place-items: center;
+    }
+
+    .glow {
+      position: absolute;
+      width: 78%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: radial-gradient(circle,
+        rgba(177, 214, 240, 0.48) 0,
+        rgba(221, 238, 252, 0.28) 48%,
+        transparent 72%);
+      filter: blur(8px);
+    }
+
+    .dial {
+      position: absolute;
+      inset: 2%;
+      border: 1px dashed rgba(63, 127, 181, 0.23);
+      border-radius: 50%;
+    }
+
+    .dial::before,
+    .dial::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: -8px;
+      width: calc(100% + 16px);
+      height: 1px;
+      background: repeating-linear-gradient(90deg,
+        rgba(63,127,181,0.24) 0 1px,
+        transparent 1px 23px);
+    }
+
+    .dial::after { transform: rotate(90deg); }
+
+    .globe-art {
+      position: relative;
+      z-index: 3;
+      width: 82%;
+      height: 82%;
+      display: grid;
+      place-items: center;
+      transition: opacity 260ms ease, transform 420ms cubic-bezier(.2,.7,.2,1);
+      filter: drop-shadow(0 20px 18px rgba(63, 127, 181, 0.16));
+    }
+
+    .globe-art.changing {
+      opacity: 0;
+      transform: translateY(14px) scale(0.96);
+    }
+
+    .globe-art svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .globe-art img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .product-info {
+      position: absolute;
+      z-index: 8;
+      left: 42px;
+      bottom: 112px;
+      min-width: 260px;
+    }
+
+    .product-name {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--text);
+      font-family: "Federo", Georgia, serif;
+      font-size: 25px;
+      line-height: 1;
+    }
+
+    .product-meta {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 12px;
+      color: var(--text-small);
+    }
+
+    .variant {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+    }
+
+    .price {
+      color: var(--gold);
+      font-family: "Federo", Georgia, serif;
+      font-size: 21px;
+    }
+
+    .explore {
+      display: inline-block;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--text);
+      color: var(--text-small);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      transition: 180ms ease;
+    }
+
+    .explore:hover {
+      color: var(--text);
+      border-color: var(--accent);
+    }
+
+    /* Bottom slanted tabs */
+    .bottom-area {
+      position: absolute;
+      z-index: 10;
+      left: 0;
+      right: 0;
+      bottom: 0;
+    }
+
+    .tabs {
+      width: calc(79% - 105px);
+      height: 72px;
+      margin-left: 21%;
+      margin-right: 105px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .tab {
+      position: relative;
+      border: 0;
+      border-left: 1px solid rgba(63,127,181,0.08);
+      margin: 0;
+      background: var(--pale);
+      color: var(--text-small);
+      cursor: pointer;
+      font-family: "Federo", Georgia, serif;
+      font-size: 17px;
+      text-align: center;
+      transform: skewX(-8deg);
+      transition: 180ms ease;
+    }
+
+    .tab span {
+      display: block;
+      transform: skewX(8deg);
+    }
+
+    .tab:hover { background: #CDE3F8; }
+
+    .tab.active {
+      background: var(--white);
+      color: var(--text);
+      transform: skewX(-8deg) translateY(-7px);
+      box-shadow: 0 -6px 18px rgba(63,127,181,0.05);
+    }
+
+    .view-all {
+      position: absolute;
+      z-index: 12;
+      left: 42px;
+      bottom: 25px;
+      color: var(--text-small);
+      font-size: 14px;
+      font-weight: 800;
+      border-bottom: 1px solid var(--text);
+      padding-bottom: 4px;
+      transition: 180ms ease;
+    }
+
+    .view-all:hover { color: var(--text); border-color: var(--accent); }
+
+    .contact {
+      position: fixed;
+      z-index: 50;
+      right: 20px;
+      bottom: 20px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 0 20px;
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      background: var(--white);
+      color: var(--text-small);
+      box-shadow: 0 10px 28px rgba(63,127,181,0.16);
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 180ms ease;
+    }
+
+    .contact::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(143,196,238,0.16);
+    }
+
+    .contact:hover { transform: translateY(-3px); border-color: var(--accent); }
+
+    /* =========================================================
+       FEATURE CARDS
+       ========================================================= */
+    .features {
+      width: calc(100% - 48px);
+      max-width: 1440px;
+      margin: 18px auto 42px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .feature-card {
+      min-height: 92px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 22px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--white);
+      color: var(--text-small);
+      box-shadow: 0 10px 28px rgba(63,127,181,0.05);
+    }
+
+    .feature-card svg {
+      width: 38px;
+      height: 38px;
+      flex: 0 0 auto;
+      color: var(--accent);
+    }
+
+    .feature-card strong {
+      display: block;
+      color: var(--text);
+      font-family: "Federo", Georgia, serif;
+      font-size: 18px;
+      font-weight: 400;
+    }
+
+    .feature-card span {
+      display: block;
+      margin-top: 3px;
+      font-size: 14px;
+    }
+
+    @media (max-width: 1180px) {
+      .brand { width: 210px; min-width: 210px; padding-inline: 20px; }
+      .brand-slogan { max-width: 170px; }
+      .category-nav { padding-inline: 10px; }
+      .nav-box { padding-inline: 9px; }
+      .utility-links { gap: 12px; padding-inline: 12px; }
+      .headline { font-size: clamp(48px, 6.2vw, 70px); }
+    }
+
+    @media (max-width: 980px) {
+      .topbar { height: auto; min-height: var(--nav-height); flex-wrap: wrap; }
+      .brand { height: var(--nav-height); }
+      .category-nav { order: 3; width: 100%; height: 54px; border-top: 1px solid var(--border); }
+      .utility { height: var(--nav-height); }
+      .utility-links { display: none; }
+      .hero { height: 720px; }
+      .headline { max-width: 440px; }
+      .product-stage { top: 52%; }
+      .tabs { width: calc(100% - 105px); margin-left: 0; }
+    }
+
+    @media (max-width: 700px) {
+      :root { --nav-height: 70px; }
+      .topbar { position: relative; }
+      .brand { width: 180px; min-width: 180px; padding-left: 16px; }
+      .brand-name { font-size: 23px; }
+      .brand-slogan { max-width: 150px; font-size: 8px; }
+      .search { width: 48px; height: 48px; margin-right: 10px; }
+      .nav-box { height: 38px; font-size: 14px; }
+
+      .hero {
+        width: calc(100% - 20px);
+        height: 760px;
+        margin-top: 10px;
+        border-radius: 18px;
+      }
+      .hero-label { top: 26px; left: 22px; }
+      .counter { top: 27px; right: 22px; }
+      .headline {
+        top: 66px;
+        left: 22px;
+        max-width: 330px;
+        font-size: 48px;
+        letter-spacing: -1.5px;
+      }
+      .corner-snowflake.top { width: 100px; height: 100px; right: 10px; }
+      .outline-word { top: 48%; font-size: clamp(105px, 31vw, 150px); }
+      .product-stage {
+        top: 47%;
+        width: 360px;
+        height: 360px;
+      }
+      .product-info {
+        left: 22px;
+        bottom: 104px;
+      }
+      .tabs {
+        width: 100%;
+        height: 64px;
+        margin: 0;
+        padding-right: 125px;
+      }
+      .tab { font-size: 14px; }
+      .view-all { left: 22px; bottom: 20px; }
+      .features {
+        width: calc(100% - 20px);
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .brand { width: 160px; min-width: 160px; }
+      .brand-name { font-size: 20px; }
+      .brand-slogan { max-width: 140px; }
+      .utility { margin-left: auto; }
+      .search { width: 44px; height: 44px; }
+
+      .hero { height: 730px; }
+      .headline {
+        max-width: 310px;
+        font-size: 42px;
+      }
+      .product-stage {
+        top: 48%;
+        width: 330px;
+        height: 330px;
+      }
+      .product-info { bottom: 94px; }
+      .product-name { font-size: 22px; }
+      .variant { font-size: 12px; }
+      .tabs {
+        height: 58px;
+        padding-right: 125px;
+      }
+      .tab { font-size: 11px; }
+      .view-all { display: none; }
+      .contact {
+        right: 10px;
+        bottom: 10px;
+        height: 46px;
+        padding-inline: 15px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .page-snow { display: none; }
+      .globe-art, .outline-word, .tab { transition: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Subtle falling page snow -->
+  <div class="page-snow" aria-hidden="true">
+    <i style="--left:3%;--size:3px;--duration:13s;--delay:-4s;--drift:25px"></i>
+    <i style="--left:9%;--size:5px;--duration:11s;--delay:-8s;--drift:-18px"></i>
+    <i style="--left:15%;--size:3px;--duration:15s;--delay:-2s;--drift:34px"></i>
+    <i style="--left:21%;--size:4px;--duration:10s;--delay:-7s;--drift:-22px"></i>
+    <i style="--left:28%;--size:3px;--duration:14s;--delay:-10s;--drift:16px"></i>
+    <i style="--left:34%;--size:5px;--duration:9s;--delay:-3s;--drift:-30px"></i>
+    <i style="--left:41%;--size:3px;--duration:16s;--delay:-12s;--drift:28px"></i>
+    <i style="--left:48%;--size:4px;--duration:12s;--delay:-5s;--drift:-15px"></i>
+    <i style="--left:55%;--size:3px;--duration:14s;--delay:-9s;--drift:33px"></i>
+    <i style="--left:62%;--size:5px;--duration:10s;--delay:-1s;--drift:-26px"></i>
+    <i style="--left:69%;--size:3px;--duration:15s;--delay:-6s;--drift:20px"></i>
+    <i style="--left:76%;--size:4px;--duration:12s;--delay:-11s;--drift:-34px"></i>
+    <i style="--left:83%;--size:3px;--duration:9s;--delay:-4s;--drift:27px"></i>
+    <i style="--left:91%;--size:5px;--duration:14s;--delay:-8s;--drift:-19px"></i>
+    <i style="--left:97%;--size:3px;--duration:11s;--delay:-2s;--drift:30px"></i>
+  </div>
+
+  <header class="topbar">
+    <!-- EDIT BRAND NAME AND SLOGAN HERE -->
+    <a class="brand" href="#" aria-label="White Palace home">
+      <div>
+        <span class="brand-name">White Palace</span>
+        <span class="brand-slogan">A Palace of white beyond the glass of frosted white.</span>
+      </div>
+    </a>
+
+    <!-- EDIT NAVIGATION LABELS HERE -->
+    <nav class="category-nav" aria-label="Globe categories">
+      <button class="nav-box active" type="button" data-index="0">ALL GLOBES</button>
+      <button class="nav-box" type="button" data-index="0">PENGUIN</button>
+      <button class="nav-box" type="button" data-index="1">SNOWMAN</button>
+      <button class="nav-box" type="button" data-index="2">REINDEER</button>
+      <button class="nav-box" type="button" data-index="3">TREE</button>
+    </nav>
+
+    <div class="utility">
+      <nav class="utility-links" aria-label="Utility navigation">
+        <a href="#find">Find us</a>
+        <a href="#gifts">Gift ideas</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <button class="search" type="button" aria-label="Search">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="10.5" cy="10.5" r="5.5" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M15 15l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="hero" aria-label="Featured snow globes">
+      <div class="hero-circle" aria-hidden="true"></div>
+      <div class="hero-circle-small" aria-hidden="true"></div>
+
+      <!-- Corner line-art snowflakes; edit size, position or opacity in CSS -->
+      <svg class="corner-snowflake top" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+        <g stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <path d="M50 8v84M14 29l72 42M14 71l72-42"/>
+          <path d="M50 19l-8 8m8-8l8 8M50 81l-8-8m8 8l8-8M21 34l11 1m-11-1l5-10M79 66l-11-1m11 1l-5 10M21 66l11-1m-11 1l5 10M79 34l-11 1m11-1l-5-10"/>
+        </g>
+      </svg>
+      <svg class="corner-snowflake bottom" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+        <g stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <path d="M50 8v84M14 29l72 42M14 71l72-42"/>
+          <path d="M50 19l-8 8m8-8l8 8M50 81l-8-8m8 8l8-8M21 34l11 1m-11-1l5-10M79 66l-11-1m11 1l-5 10"/>
+        </g>
+      </svg>
+
+      <svg class="sparkle one" viewBox="0 0 20 20" aria-hidden="true">
+        <path d="M10 1c.8 5.7 3.3 8.2 9 9-5.7.8-8.2 3.3-9 9-.8-5.7-3.3-8.2-9-9 5.7-.8 8.2-3.3 9-9z" fill="#8FC4EE"/>
+      </svg>
+      <svg class="sparkle two" viewBox="0 0 20 20" aria-hidden="true">
+        <path d="M10 1c.8 5.7 3.3 8.2 9 9-5.7.8-8.2 3.3-9 9-.8-5.7-3.3-8.2-9-9 5.7-.8 8.2-3.3 9-9z" fill="#8FC4EE"/>
+      </svg>
+      <svg class="sparkle three" viewBox="0 0 20 20" aria-hidden="true">
+        <path d="M10 1c.8 5.7 3.3 8.2 9 9-5.7.8-8.2 3.3-9 9-.8-5.7-3.3-8.2-9-9 5.7-.8 8.2-3.3 9-9z" fill="#8FC4EE"/>
+      </svg>
+
+      <!-- EDIT HERO LABEL AND HEADLINE HERE -->
+      <div class="hero-label">A CLOSER LOOK</div>
+      <h1 class="headline">A palace<br>of white.</h1>
+      <div class="counter" aria-live="polite"><span id="counterCurrent">01</span> / <span id="counterTotal">04</span></div>
+
+      <!-- Giant background word; never overlaps the headline -->
+      <h2 class="outline-word" id="outlineWord" aria-hidden="true">PENGUIN</h2>
+
+      <div class="product-stage" aria-live="polite">
+        <div class="glow" aria-hidden="true"></div>
+        <div class="dial" aria-hidden="true"></div>
+        <div class="globe-art" id="globeArt">
+          <!-- The initial SVG is also generated by JavaScript below. -->
+        </div>
+      </div>
+
+      <!-- EDIT PRODUCT DATA (NAME, VARIANT, PRICE, IMAGES) IN JS BELOW -->
+      <div class="product-info">
+        <span class="product-name" id="productName">Penguin</span>
+        <div class="product-meta">
+          <span class="variant" id="variantName">Frosted White</span>
+          <span class="price" id="price">$5</span>
+        </div>
+        <a class="explore" href="#" id="exploreLink">EXPLORE THIS STYLE ↗</a>
+      </div>
+
+      <div class="bottom-area">
+        <!-- EDIT TAB LABELS HERE -->
+        <nav class="tabs" aria-label="Choose a snow globe">
+          <button class="tab active" type="button" data-index="0" aria-label="Show Penguin globe"><span>Penguin</span></button>
+          <button class="tab" type="button" data-index="1" aria-label="Show Snowman globe"><span>Snowman</span></button>
+          <button class="tab" type="button" data-index="2" aria-label="Show Reindeer globe"><span>Reindeer</span></button>
+          <button class="tab" type="button" data-index="3" aria-label="Show Christmas Tree globe"><span>Christmas Tree</span></button>
+        </nav>
+        <a class="view-all" href="#">View all globes ↗</a>
+      </div>
+    </section>
+
+    <!-- EDIT FEATURE CARD TEXT HERE -->
+    <section class="features" aria-label="Product benefits">
+      <article class="feature-card">
+        <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <path d="M24 6l11 5v9c0 9-4.8 15-11 17-6.2-2-11-8-11-17v-9l11-5z" stroke="currentColor" stroke-width="2"/>
+          <path d="M17 24l5 5 9-11" stroke="#C62828" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div><strong>Handmade with care</strong><span>Made slowly, packed gently</span></div>
+      </article>
+      <article class="feature-card">
+        <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <path d="M8 20h32v20H8zM6 15h36v7H6zM24 15v25M24 15c-7-1-9-7-5-9 4-2 5 3 5 9zm0 0c7-1 9-7 5-9-4-2-5 3-5 9z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+        <div><strong>Gift-ready packaging</strong><span>Beautiful from the first look</span></div>
+      </article>
+      <article class="feature-card">
+        <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <path d="M15 40V14h18v26M11 14h26M18 9h12v5H18z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M24 20v14M17 27h14" stroke="#C62828" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <div><strong>Add a name tag</strong><span>Personalise for +$1</span></div>
+      </article>
+    </section>
+  </main>
+
+  <!-- EDIT CONTACT BUTTON TEXT HERE -->
+  <button class="contact" id="contact" type="button">Contact Us</button>
+
+  <script>
+    /* =========================================================
+       EDIT PRODUCT TEXT, PRICES AND IMAGES HERE
+
+       Set "image" to "img/penguin.png" to use a real photo.
+       Leave it null to draw the clean inline SVG shown below.
+       ========================================================= */
+    const products = [
+      {
+        name: "Penguin",
+        outline: "PENGUIN",
+        variant: "Frosted White",
+        price: "$5",
+        image: null,
+        alt: "Handmade penguin snow globe"
+      },
+      {
+        name: "Snowman",
+        outline: "SNOWMAN",
+        variant: "Classic Snow",
+        price: "$5",
+        image: null,
+        alt: "Handmade snowman snow globe"
+      },
+      {
+        name: "Reindeer",
+        outline: "REINDEER",
+        variant: "Woodland White",
+        price: "$6",
+        image: null,
+        alt: "Handmade reindeer snow globe"
+      },
+      {
+        name: "Christmas Tree",
+        outline: "TREE",
+        variant: "Pine &amp; Pearl",
+        price: "$6",
+        image: null,
+        alt: "Handmade Christmas tree snow globe"
+      }
+    ];
+
+    const globeArt = document.getElementById("globeArt");
+    const outlineWord = document.getElementById("outlineWord");
+    const productName = document.getElementById("productName");
+    const variantName = document.getElementById("variantName");
+    const price = document.getElementById("price");
+    const counterCurrent = document.getElementById("counterCurrent");
+    const tabs = [...document.querySelectorAll(".tab")];
+    const navButtons = [...document.querySelectorAll(".nav-box")];
+    const hero = document.getElementById("hero");
+
+    function globeShell(inner) {
+      return `
+        <svg viewBox="0 0 420 460" role="img" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="glass" cx="38%" cy="28%" r="72%">
+              <stop offset="0" stop-color="#FFFFFF" stop-opacity=".82"/>
+              <stop offset=".55" stop-color="#DDF0FB" stop-opacity=".42"/>
+              <stop offset="1" stop-color="#AFCFE5" stop-opacity=".24"/>
+            </radialGradient>
+            <linearGradient id="base" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#FFFFFF"/>
+              <stop offset="1" stop-color="#E3F1FC"/>
+            </linearGradient>
+            <clipPath id="sphereClip"><circle cx="210" cy="206" r="146"/></clipPath>
+          </defs>
+          <ellipse cx="210" cy="410" rx="116" ry="18" fill="#76A6C5" opacity=".12"/>
+          <circle cx="210" cy="206" r="148" fill="url(#glass)" stroke="#C8DFF1" stroke-width="5"/>
+          <circle cx="210" cy="206" r="138" fill="none" stroke="#FFFFFF" stroke-opacity=".82" stroke-width="2"/>
+          <g clip-path="url(#sphereClip)">
+            <circle cx="158" cy="112" r="14" fill="#FFFFFF" opacity=".9"/>
+            <ellipse cx="132" cy="145" rx="30" ry="12" fill="#FFFFFF" opacity=".42" transform="rotate(-42 132 145)"/>
+            ${inner}
+            <g fill="#FFFFFF" opacity=".82">
+              <circle cx="118" cy="188" r="4"/><circle cx="278" cy="145" r="3"/>
+              <circle cx="302" cy="224" r="5"/><circle cx="145" cy="238" r="3"/>
+              <circle cx="238" cy="104" r="3.5"/><circle cx="176" cy="155" r="2.5"/>
+            </g>
+          </g>
+          <path d="M96 346h228l22 48H74z" fill="url(#base)" stroke="#C8DFF1" stroke-width="4"/>
+          <path d="M74 394h272v18c0 10-8 18-18 18H92c-10 0-18-8-18-18z" fill="#F8FCFF" stroke="#C8DFF1" stroke-width="4"/>
+          <path d="M186 346c0-20 48-20 48 0" fill="none" stroke="#C62828" stroke-width="10" stroke-linecap="round"/>
+          <circle cx="210" cy="344" r="7" fill="#C62828"/>
+        </svg>`;
+    }
+
+    function penguinSvg() {
+      return globeShell(`
+        <ellipse cx="210" cy="311" rx="80" ry="18" fill="#B8D5E7" opacity=".62"/>
+        <ellipse cx="210" cy="230" rx="58" ry="88" fill="#F7FAFC"/>
+        <ellipse cx="210" cy="245" rx="42" ry="62" fill="#FFFFFF"/>
+        <circle cx="210" cy="164" r="55" fill="#F7FAFC"/>
+        <circle cx="210" cy="170" r="39" fill="#FFFFFF"/>
+        <circle cx="193" cy="158" r="5" fill="#3F7FB5"/>
+        <circle cx="227" cy="158" r="5" fill="#3F7FB5"/>
+        <path d="M198 176l12 9 12-9-12 20z" fill="#D9B85F"/>
+        <path d="M161 252l-22 38M259 252l22 38" stroke="#F7FAFC" stroke-width="18" stroke-linecap="round"/>
+        <path d="M177 304l-18 15M243 304l18 15" stroke="#D9B85F" stroke-width="9" stroke-linecap="round"/>
+      `);
+    }
+
+    function snowmanSvg() {
+      return globeShell(`
+        <ellipse cx="210" cy="314" rx="84" ry="16" fill="#B8D5E7" opacity=".62"/>
+        <circle cx="210" cy="275" r="67" fill="#FFFFFF"/>
+        <circle cx="210" cy="190" r="52" fill="#FFFFFF"/>
+        <circle cx="210" cy="126" r="43" fill="#FFFFFF"/>
+        <path d="M166 126h88" stroke="#6F95B1" stroke-width="8" stroke-linecap="round"/>
+        <path d="M179 89h62v38h-62z" fill="#EEF6FB" stroke="#A4C5DC" stroke-width="3"/>
+        <circle cx="194" cy="121" r="4" fill="#3F7FB5"/>
+        <circle cx="226" cy="121" r="4" fill="#3F7FB5"/>
+        <path d="M210 130l24 8-24 7z" fill="#D9B85F"/>
+        <circle cx="210" cy="183" r="5" fill="#2F6A9C"/>
+        <circle cx="210" cy="210" r="5" fill="#2F6A9C"/>
+        <path d="M145 245l-30-18M275 245l30-18" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round"/>
+      `);
+    }
+
+    function reindeerSvg() {
+      return globeShell(`
+        <ellipse cx="210" cy="312" rx="88" ry="17" fill="#B8D5E7" opacity=".62"/>
+        <ellipse cx="210" cy="248" rx="72" ry="66" fill="#A97961"/>
+        <ellipse cx="210" cy="166" rx="48" ry="56" fill="#B88770"/>
+        <ellipse cx="210" cy="238" rx="31" ry="38" fill="#D5B39E"/>
+        <circle cx="194" cy="158" r="5" fill="#3F4D58"/>
+        <circle cx="226" cy="158" r="5" fill="#3F4D58"/>
+        <ellipse cx="210" cy="184" rx="11" ry="9" fill="#3F4D58"/>
+        <path d="M174 130l-20-32M246 130l20-32" stroke="#7F604F" stroke-width="7" stroke-linecap="round"/>
+        <path d="M155 98l-16-12M265 98l16-12M155 98l-6-18M265 98l6-18" stroke="#7F604F" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="210" cy="219" r="8" fill="#C62828"/>
+        <circle cx="210" cy="219" r="5" fill="#D99A9A"/>
+      `);
+    }
+
+    function treeSvg() {
+      return globeShell(`
+        <ellipse cx="210" cy="314" rx="88" ry="17" fill="#B8D5E7" opacity=".62"/>
+        <rect x="198" y="286" width="24" height="38" rx="3" fill="#9C7455"/>
+        <path d="M210 96l-72 136h144z" fill="#557F71"/>
+        <path d="M210 138l-88 120h176z" fill="#668F7F"/>
+        <path d="M210 178l-78 108h156z" fill="#739B8B"/>
+        <circle cx="178" cy="205" r="7" fill="#D9B85F"/>
+        <circle cx="238" cy="229" r="7" fill="#C62828"/>
+        <circle cx="210" cy="274" r="7" fill="#D9B85F"/>
+        <circle cx="165" cy="273" r="6" fill="#C62828"/>
+        <circle cx="255" cy="274" r="6" fill="#D9B85F"/>
+        <path d="M210 96l8 14h-16z" fill="#D9B85F"/>
+      `);
+    }
+
+    const globeRenderers = [penguinSvg, snowmanSvg, reindeerSvg, treeSvg];
+    let currentIndex = 0;
+    let autoTimer = null;
+    let paused = false;
+
+    function renderProduct(index) {
+      const product = products[index];
+      if (!product) return;
+
+      globeArt.classList.add("changing");
+      outlineWord.classList.add("changing");
+
+      window.setTimeout(() => {
+        productName.textContent = product.name;
+        outlineWord.textContent = product.outline;
+        variantName.textContent = product.variant;
+        price.textContent = product.price;
+        counterCurrent.textContent = String(index + 1).padStart(2, "0");
+
+        if (product.image) {
+          globeArt.innerHTML = `<img src="${product.image}" alt="${product.alt}">`;
+        } else {
+          globeArt.innerHTML = globeRenderers[index]();
+        }
+
+        globeArt.classList.remove("changing");
+        outlineWord.classList.remove("changing");
+      }, 220);
+
+      tabs.forEach((tab, tabIndex) => {
+        const active = tabIndex === index;
+        tab.classList.toggle("active", active);
+        tab.setAttribute("aria-selected", String(active));
+      });
+
+      navButtons.forEach((button) => {
+        button.classList.toggle("active",
+          button.dataset.index === String(index) ||
+          (button.textContent.trim() === "ALL GLOBES" && index === 0)
+        );
+      });
+
+      currentIndex = index;
+    }
+
+    function startAutoAdvance() {
+      window.clearInterval(autoTimer);
+      autoTimer = window.setInterval(() => {
+        if (!paused && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          renderProduct((currentIndex + 1) % products.length);
+        }
+      }, 6000);
+    }
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        renderProduct(Number(tab.dataset.index));
+        startAutoAdvance();
+      });
+    });
+
+    navButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        renderProduct(Number(button.dataset.index));
+        startAutoAdvance();
+      });
+    });
+
+    hero.addEventListener("mouseenter", () => { paused = true; });
+    hero.addEventListener("mouseleave", () => { paused = false; });
+    hero.addEventListener("focusin", () => { paused = true; });
+    hero.addEventListener("focusout", () => { paused = false; });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight") {
+        renderProduct((currentIndex + 1) % products.length);
+        startAutoAdvance();
+      } else if (event.key === "ArrowLeft") {
+        renderProduct((currentIndex - 1 + products.length) % products.length);
+        startAutoAdvance();
+      }
+    });
+
+    // Initial render
+    globeArt.innerHTML = penguinSvg();
+    startAutoAdvance();
+  </script>
+</body>
+</html>
