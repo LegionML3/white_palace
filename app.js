@@ -1,4 +1,22 @@
+import { CATALOG_ITEMS, PRICING_CONFIG, getItemPrice } from "./data.js";
+import { renderGlobe } from "./globe-art.js";
+
 // Showcase and catalog interactions.
+const products = CATALOG_ITEMS.map((item) => ({
+  ...item,
+  version: item.edition === "premium-tree" || item.hasTree ? "Premium" : "Standard",
+  price: getItemPrice(item)
+}));
+const THEMES = [...new Set(CATALOG_ITEMS.map((item) => item.theme))];
+const themeOutlines = {
+  Penguin: "PENGUIN",
+  Santa: "SANTA",
+  Star: "STAR",
+  Reindeer: "REINDEER",
+  Elf: "ELF",
+  Snowman: "SNOWMAN",
+  "Christmas Tree": "TREE"
+};
 const globeArt = document.getElementById("globeArt");
 const outlineWord = document.getElementById("outlineWord");
 const productName = document.getElementById("productName");
@@ -16,16 +34,6 @@ const searchButton = document.querySelector(".search");
 const searchPanel = document.getElementById("searchPanel");
 const globeSearch = document.getElementById("globeSearch");
 
-const themeRenderers = {
-  Penguin: penguinSvg,
-  Santa: santaSvg,
-  Star: starSvg,
-  Reindeer: reindeerSvg,
-  Elf: elfSvg,
-  Snowman: snowmanSvg,
-  "Christmas Tree": christmasTreeSvg
-};
-
 let currentTheme = "Penguin";
 let currentIndex = 0;
 let themeFilter = "All";
@@ -37,7 +45,7 @@ let autoTimer = null;
 counterTotal.textContent = String(products.length).padStart(2, "0");
 
 function formatMoney(value) {
-  return new Intl.NumberFormat(undefined, { style: "currency", currency: CURRENCY }).format(value);
+  return `${PRICING_CONFIG.currencySymbol}${value.toFixed(2)}`;
 }
 
 function renderHeroProduct(product) {
@@ -46,14 +54,12 @@ function renderHeroProduct(product) {
   outlineWord.classList.add("changing");
 
   window.setTimeout(() => {
+    variantName.textContent = `${product.finish} · ${product.version}${product.hasTree ? " (+ Tree)" : ""}`;
     productName.textContent = product.name;
-    outlineWord.textContent = product.outline;
-    variantName.textContent = `${product.edition} · ${product.version}${product.version === "Premium" ? " (with Tree)" : ""}`;
+    outlineWord.textContent = themeOutlines[product.theme];
     price.textContent = formatMoney(product.price);
     counterCurrent.textContent = String(currentIndex + 1).padStart(2, "0");
-    globeArt.innerHTML = product.image
-      ? `<img src="${product.image}" alt="${product.alt}">`
-      : themeRenderers[product.theme](product.version === "Premium");
+    globeArt.innerHTML = renderGlobe(product);
     globeArt.classList.remove("changing");
     outlineWord.classList.remove("changing");
   }, 220);
@@ -101,14 +107,14 @@ function renderCatalog() {
     const card = document.createElement("article");
     card.className = "product-card";
     card.innerHTML = `
-      <a class="card-art" href="product.html?id=${encodeURIComponent(product.id)}" aria-label="View ${product.name}, ${product.edition}, ${product.version}">
-        ${themeRenderers[product.theme](product.version === "Premium")}
+      <a class="card-art" href="product.html?id=${encodeURIComponent(product.id)}" aria-label="View ${product.name}, ${product.finish}, ${product.version}">
+        ${renderGlobe(product)}
       </a>
       <div class="card-body">
         <span class="card-theme">${product.theme}</span>
-        <h3 class="card-name">${product.finish}<br>${product.edition}</h3>
+        <h3 class="card-name">${product.name}</h3>
         <div class="card-footer">
-          <span class="card-edition">${product.version}${product.version === "Premium" ? " · with tree" : ""}</span>
+          <span class="card-edition">${product.finish} · ${product.version}${product.hasTree ? " · with tree" : ""}</span>
           <span class="card-price">${formatMoney(product.price)}</span>
         </div>
       </div>`;
@@ -201,7 +207,7 @@ globeSearch.addEventListener("input", () => {
   }
 
   const filtered = products.filter((product) =>
-    `${product.theme} ${product.edition} ${product.finish} ${product.version}`.toLowerCase().includes(query)
+    `${product.name} ${product.theme} ${product.finish} ${product.version}`.toLowerCase().includes(query)
   );
   catalogCount.textContent = `${filtered.length} ${filtered.length === 1 ? "design" : "designs"}`;
   productGrid.innerHTML = filtered.length
@@ -212,14 +218,14 @@ globeSearch.addEventListener("input", () => {
     const card = document.createElement("article");
     card.className = "product-card";
     card.innerHTML = `
-      <a class="card-art" href="product.html?id=${encodeURIComponent(product.id)}" aria-label="View ${product.name}, ${product.edition}, ${product.version}">
-        ${themeRenderers[product.theme](product.version === "Premium")}
+      <a class="card-art" href="product.html?id=${encodeURIComponent(product.id)}" aria-label="View ${product.name}, ${product.finish}, ${product.version}">
+        ${renderGlobe(product)}
       </a>
       <div class="card-body">
         <span class="card-theme">${product.theme}</span>
-        <h3 class="card-name">${product.finish}<br>${product.edition}</h3>
+        <h3 class="card-name">${product.name}</h3>
         <div class="card-footer">
-          <span class="card-edition">${product.version}${product.version === "Premium" ? " · with tree" : ""}</span>
+          <span class="card-edition">${product.finish} · ${product.version}${product.hasTree ? " · with tree" : ""}</span>
           <span class="card-price">${formatMoney(product.price)}</span>
         </div>
       </div>`;

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#F7FBFF">
+  <title>White Palace | Local Price Editor</title>
+  <style>
+    :root {
+      color-scheme:light;
+      --page:#f7fbff; --white:#fff; --navy:#264b68; --slate:#35536a;
+      --ice:#4f86af; --border:#d9e9f6; --gold:#9a7022;
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--page); color:var(--slate); font:15px/1.5 "Segoe UI",Arial,sans-serif; }
+    main { max-width:1100px; margin:34px auto; padding:0 20px 60px; }
+    header { display:flex; align-items:end; justify-content:space-between; gap:20px; margin-bottom:22px; }
+    h1 { margin:0; color:var(--navy); font:40px/1.05 Georgia,serif; }
+    header p { margin:8px 0 0; max-width:640px; }
+    .badge { padding:7px 11px; border:1px solid var(--border); border-radius:20px; background:var(--white); font-weight:700; white-space:nowrap; }
+    .price-settings,.filters,.toolbar {
+      display:flex; align-items:end; flex-wrap:wrap; gap:12px; padding:16px;
+      border:1px solid var(--border); border-radius:14px; background:var(--white);
+    }
+    .price-settings { margin-bottom:14px; }
+    label { display:grid; gap:5px; color:var(--navy); font-size:12px; font-weight:800; }
+    input,select {
+      height:40px; min-width:130px; padding:0 10px; border:1px solid #bfd4e4; border-radius:7px;
+      background:#fff; color:var(--navy); font:inherit;
+    }
+    input[type=number] { width:130px; }
+    .hint { margin:0 0 0 auto; max-width:420px; color:var(--slate); font-size:12px; }
+    .filters { margin-bottom:14px; }
+    .filters label { min-width:180px; }
+    .table-wrap { overflow:auto; border:1px solid var(--border); border-radius:14px; background:var(--white); }
+    table { width:100%; min-width:740px; border-collapse:collapse; text-align:left; }
+    th,td { padding:12px 14px; border-bottom:1px solid #eaf2f8; vertical-align:middle; }
+    th { position:sticky; top:0; background:#edf6fd; color:var(--navy); font-size:12px; text-transform:uppercase; letter-spacing:.6px; }
+    tbody tr:last-child td { border-bottom:0; }
+    .product-name { display:block; color:var(--navy); font-weight:800; }
+    .subtle { color:#5f788d; font-size:12px; }
+    .edition { display:inline-block; padding:5px 8px; border-radius:12px; background:#edf6fd; color:var(--navy); font-size:11px; font-weight:800; white-space:nowrap; }
+    .money { color:var(--gold); font:20px Georgia,serif; white-space:nowrap; }
+    .override-input { width:120px; min-width:120px; }
+    .toolbar { justify-content:space-between; align-items:center; margin-top:14px; }
+    .actions { display:flex; flex-wrap:wrap; gap:9px; }
+    button {
+      min-height:42px; padding:0 16px; border:1px solid var(--navy); border-radius:22px;
+      background:var(--navy); color:#fff; font:700 13px "Segoe UI",Arial,sans-serif; cursor:pointer;
+    }
+    button.secondary { background:#fff; color:var(--navy); }
+    button:hover { background:var(--ice); border-color:var(--ice); color:#fff; }
+    .status { min-height:20px; margin:0; font-size:12px; color:var(--navy); }
+    .empty { padding:30px; text-align:center; }
+    @media(max-width:640px) {
+      main { margin-top:22px; padding:0 12px 40px; }
+      header { align-items:start; flex-direction:column; }
+      h1 { font-size:34px; }
+      .hint { margin:0; }
+      .toolbar { align-items:start; flex-direction:column; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>White Palace Price Editor</h1>
+        <p>Review and adjust the local catalog. This page is a private editing utility; it does not add controls to the public storefront.</p>
+      </div>
+      <span class="badge" id="itemCount">45 products</span>
+    </header>
+
+    <section class="price-settings" aria-label="Global prices">
+      <label>Standard base price
+        <input id="standardPrice" type="number" min="0" step="0.01">
+      </label>
+      <label>Premium tree add-on
+        <input id="treeAddon" type="number" min="0" step="0.01">
+      </label>
+      <label>Currency symbol
+        <input id="currencySymbol" type="text" maxlength="5">
+      </label>
+      <p class="hint">Standard price + finish adjustment. Premium (+ Tree) adds the tree amount. A product override replaces its calculated price.</p>
+    </section>
+
+    <section class="filters" aria-label="Catalog filters">
+      <label>Theme
+        <select id="themeFilter"><option value="all">All themes</option></select>
+      </label>
+      <label>Edition
+        <select id="editionFilter">
+          <option value="all">All editions</option>
+          <option value="standard">Standard</option>
+          <option value="premium-tree">Premium (+ Tree)</option>
+        </select>
+      </label>
+    </section>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Product</th><th>Theme</th><th>Edition</th><th>Finish</th><th>Calculated price</th><th>Price override</th>
+          </tr>
+        </thead>
+        <tbody id="catalogRows"></tbody>
+      </table>
+    </div>
+
+    <section class="toolbar">
+      <p class="status" id="status" role="status" aria-live="polite"></p>
+      <div class="actions">
+        <button class="secondary" type="button" id="copyData">Copy updated data.js</button>
+        <button type="button" id="downloadData">Download updated data.js</button>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { CATALOG_ITEMS, PRICING_CONFIG, THEMES } from "./data.js";
+
+    const config = {
+      standardPrice: PRICING_CONFIG.standardPrice,
+      premiumTreeAddon: PRICING_CONFIG.premiumTreeAddon,
+      currencySymbol: PRICING_CONFIG.currencySymbol,
+      finishPriceAdjustments: { ...PRICING_CONFIG.finishPriceAdjustments }
+    };
+    const items = CATALOG_ITEMS.map((item) => ({ ...item }));
+    const rows = document.getElementById("catalogRows");
+    const status = document.getElementById("status");
+    const themeFilter = document.getElementById("themeFilter");
+    const editionFilter = document.getElementById("editionFilter");
+
+    THEMES.forEach((theme) => themeFilter.add(new Option(theme, theme)));
+    document.getElementById("standardPrice").value = config.standardPrice;
+    document.getElementById("treeAddon").value = config.premiumTreeAddon;
+    document.getElementById("currencySymbol").value = config.currencySymbol;
+    document.getElementById("itemCount").textContent = `${items.length} products`;
+
+    function currentPrice(item) {
+      if (Number.isFinite(item.priceOverride)) return item.priceOverride;
+      const addon = item.hasTree || item.edition === "premium-tree" ? config.premiumTreeAddon : 0;
+      return config.standardPrice + addon + (config.finishPriceAdjustments[item.finish] || 0);
+    }
+
+    function priceText(value) {
+      return `${config.currencySymbol}${value.toFixed(2)}`;
+    }
+
+    function render() {
+      const visible = items.filter((item) =>
+        (themeFilter.value === "all" || item.theme === themeFilter.value) &&
+        (editionFilter.value === "all" || item.edition === editionFilter.value)
+      );
+      rows.innerHTML = "";
+
+      visible.forEach((item) => {
+        const row = document.createElement("tr");
+        const editionLabel = item.edition === "premium-tree" ? "Premium (+ Tree)" : "Standard";
+        row.innerHTML = `
+          <td><span class="product-name"></span><span class="subtle">${item.id}</span></td>
+          <td></td>
+          <td><span class="edition"></span></td>
+          <td></td>
+          <td class="money"></td>
+          <td><input class="override-input" type="number" min="0" step="0.01" aria-label="Price override for ${item.name}" placeholder="Default"></td>`;
+        row.querySelector(".product-name").textContent = item.name;
+        row.children[1].textContent = item.theme;
+        row.querySelector(".edition").textContent = editionLabel;
+        row.children[3].textContent = item.finish;
+        row.querySelector(".money").textContent = priceText(currentPrice(item));
+        const override = row.querySelector(".override-input");
+        override.value = Number.isFinite(item.priceOverride) ? item.priceOverride : "";
+        override.addEventListener("input", () => {
+          if (override.value === "") delete item.priceOverride;
+          else item.priceOverride = Number(override.value);
+          row.querySelector(".money").textContent = priceText(currentPrice(item));
+        });
+        rows.appendChild(row);
+      });
+
+      if (!visible.length) {
+        rows.innerHTML = '<tr><td class="empty" colspan="6">No products match these filters.</td></tr>';
+      }
+    }
+
+    function makeSource() {
+      const cleanItems = items.map((item) => {
+        const clean = { ...item };
+        if (!Number.isFinite(clean.priceOverride)) delete clean.priceOverride;
+        return clean;
+      });
+      return `/*
+ * WHITE PALACE CATALOG AND PRICING
+ * Change STANDARD_PRICE once to update every Standard globe's base price.
+ * Change PREMIUM_TREE_ADDON once to update every Premium (+ Tree) globe's extra cost.
+ * A finish adjustment is added after those values. Set priceOverride on one catalog item
+ * to replace its calculated price when that individual product needs a special price.
+ */
+const STANDARD_PRICE = ${Number(config.standardPrice)};
+const PREMIUM_TREE_ADDON = ${Number(config.premiumTreeAddon)};
+const CURRENCY_SYMBOL = ${JSON.stringify(config.currencySymbol)};
+const FINISH_PRICE_ADJUSTMENTS = ${JSON.stringify(config.finishPriceAdjustments, null, 2)};
+
+export const PRICING_CONFIG = Object.freeze({
+  standardPrice: STANDARD_PRICE,
+  premiumTreeAddon: PREMIUM_TREE_ADDON,
+  currencySymbol: CURRENCY_SYMBOL,
+  finishPriceAdjustments: Object.freeze({ ...FINISH_PRICE_ADJUSTMENTS })
+});
+
+export function getItemPrice(item) {
+  if (Number.isFinite(item.priceOverride)) return item.priceOverride;
+  const treeAddon = item.hasTree || item.edition === "premium-tree" ? PREMIUM_TREE_ADDON : 0;
+  const finishAdjustment = FINISH_PRICE_ADJUSTMENTS[item.finish] || 0;
+  return STANDARD_PRICE + treeAddon + finishAdjustment;
+}
+
+// IDs retain the storefront's existing URL format so saved product links continue to work.
+export const CATALOG_ITEMS = ${JSON.stringify(cleanItems, null, 2)};
+
+export const THEMES = Object.freeze([...new Set(CATALOG_ITEMS.map((item) => item.theme))]);
+`;
+    }
+
+    document.getElementById("standardPrice").addEventListener("input", (event) => {
+      config.standardPrice = Math.max(0, Number(event.target.value) || 0);
+      render();
+    });
+    document.getElementById("treeAddon").addEventListener("input", (event) => {
+      config.premiumTreeAddon = Math.max(0, Number(event.target.value) || 0);
+      render();
+    });
+    document.getElementById("currencySymbol").addEventListener("input", (event) => {
+      config.currencySymbol = event.target.value || "$";
+      render();
+    });
+    themeFilter.addEventListener("change", render);
+    editionFilter.addEventListener("change", render);
+
+    document.getElementById("downloadData").addEventListener("click", () => {
+      const blob = new Blob([makeSource()], { type: "text/javascript;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = "data.js";
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+      status.textContent = "Updated data.js downloaded. Replace the existing catalog file with the downloaded file.";
+    });
+
+    document.getElementById("copyData").addEventListener("click", async () => {
+      const source = makeSource();
+      try {
+        await navigator.clipboard.writeText(source);
+        status.textContent = "Updated data.js copied to the clipboard.";
+      } catch (error) {
+        status.textContent = "Clipboard access is unavailable here. Use Download updated data.js instead.";
+      }
+    });
+
+    render();
+  </script>
+</body>
+</html>

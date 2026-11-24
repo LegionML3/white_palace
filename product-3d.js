@@ -1,5 +1,11 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { CATALOG_ITEMS, PRICING_CONFIG, THEMES, getItemPrice } from "./data.js";
+
+const products = CATALOG_ITEMS.map((item) => ({
+  ...item,
+  version: item.edition === "premium-tree" || item.hasTree ? "Premium" : "Standard"
+}));
 
 const canvas = document.getElementById("globeCanvas");
 const viewer = document.getElementById("viewer");
@@ -325,7 +331,7 @@ function rebuildScene() {
   characterGroup = new THREE.Group();
   globeGroup.children.slice(firstCharacterChild).forEach((child) => characterGroup.add(child));
   globeGroup.add(characterGroup);
-  if (currentProduct.version === "Premium") buildPremiumTree();
+  if (currentProduct.hasTree || currentProduct.edition === "premium-tree") buildPremiumTree();
   buildWinterScene();
   applyView(activeView);
 }
@@ -365,7 +371,7 @@ function applyView(view) {
 }
 
 function formatMoney(value) {
-  return new Intl.NumberFormat(undefined, { style: "currency", currency: CURRENCY }).format(value);
+  return `${PRICING_CONFIG.currencySymbol}${value.toFixed(2)}`;
 }
 
 function resolveProduct() {
@@ -384,12 +390,12 @@ function resolveProduct() {
 
 function updateProduct(product, updateUrl = true) {
   currentProduct = product;
-  const title = `${product.name} · ${product.edition} Snow Globe`;
+  const title = product.name;
   document.title = `${title} | White Palace`;
   document.getElementById("productTitle").textContent = title;
-  document.getElementById("themeBadge").textContent = product.name;
-  document.getElementById("breadcrumbTheme").textContent = product.name;
-  document.getElementById("editionSelect").value = product.edition;
+  document.getElementById("themeBadge").textContent = product.theme;
+  document.getElementById("breadcrumbTheme").textContent = product.theme;
+  document.getElementById("editionSelect").value = product.finish;
 
   document.querySelectorAll("[data-version]").forEach((button) => {
     const active = button.dataset.version === product.version;
@@ -397,7 +403,7 @@ function updateProduct(product, updateUrl = true) {
     button.setAttribute("aria-pressed", String(active));
   });
 
-  const price = getProductPrice(product);
+  const price = getItemPrice(product);
   document.getElementById("mainPrice").textContent = formatMoney(price);
   document.getElementById("orderPrice").textContent = formatMoney(price);
   document.getElementById("quantity").value = "1";
@@ -411,27 +417,27 @@ function updateProduct(product, updateUrl = true) {
   }
 }
 
-function findMatchingProduct(theme, edition, version) {
+function findMatchingProduct(theme, finish, version) {
   return products.find((product) =>
     product.theme === theme &&
-    product.edition === edition &&
+    product.finish === finish &&
     product.version === version
   );
 }
 
 function updateOptions() {
   const editionSelect = document.getElementById("editionSelect");
-  const editions = [...new Set(products
+  const finishes = [...new Set(products
     .filter((product) => product.theme === currentProduct.theme)
-    .map((product) => product.edition))];
-  editionSelect.innerHTML = editions.map((edition) => {
-    const available = Boolean(findMatchingProduct(currentProduct.theme, edition, currentProduct.version));
-    return `<option value="${edition}"${available ? "" : " disabled"}>${edition}${available ? "" : " · unavailable for this edition"}</option>`;
+    .map((product) => product.finish))];
+  editionSelect.innerHTML = finishes.map((finish) => {
+    const available = Boolean(findMatchingProduct(currentProduct.theme, finish, currentProduct.version));
+    return `<option value="${finish}"${available ? "" : " disabled"}>${finish}${available ? "" : " · unavailable for this edition"}</option>`;
   }).join("");
-  editionSelect.value = currentProduct.edition;
+  editionSelect.value = currentProduct.finish;
 
   document.querySelectorAll("[data-version]").forEach((button) => {
-    button.disabled = !findMatchingProduct(currentProduct.theme, currentProduct.edition, button.dataset.version);
+    button.disabled = !findMatchingProduct(currentProduct.theme, currentProduct.finish, button.dataset.version);
   });
 }
 
@@ -440,7 +446,7 @@ function populateSwitcher() {
   switcher.innerHTML = THEMES.map((theme) => `
     <optgroup label="${theme}">
       ${products.filter((product) => product.theme === theme).map((product) =>
-        `<option value="${product.id}">${product.edition} · ${product.version}${product.version === "Premium" ? " + Tree" : ""}</option>`
+        `<option value="${product.id}">${product.finish} · ${product.version}${product.hasTree ? " + Tree" : ""}</option>`
       ).join("")}
     </optgroup>`).join("");
   switcher.value = currentProduct.id;
@@ -448,7 +454,7 @@ function populateSwitcher() {
 
 document.querySelectorAll("[data-version]").forEach((button) => {
   button.addEventListener("click", () => {
-    const match = findMatchingProduct(currentProduct.theme, currentProduct.edition, button.dataset.version);
+    const match = findMatchingProduct(currentProduct.theme, currentProduct.finish, button.dataset.version);
     if (match) {
       updateProduct(match);
       updateOptions();
@@ -464,7 +470,7 @@ document.getElementById("editionSelect").addEventListener("change", (event) => {
     updateOptions();
     populateSwitcher();
   } else {
-    event.target.value = currentProduct.edition;
+    event.target.value = currentProduct.finish;
   }
 });
 
@@ -499,7 +505,7 @@ document.getElementById("reserveButton").addEventListener("click", (event) => {
   const quantity = document.getElementById("quantity").value;
   const request = {
     productId: currentProduct.id,
-    productName: `${currentProduct.name} · ${currentProduct.edition} · ${currentProduct.version}`,
+    productName: `${currentProduct.name} · ${currentProduct.finish} · ${currentProduct.version}`,
     quantity: Number(quantity),
     createdAt: new Date().toISOString()
   };
