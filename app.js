@@ -37,7 +37,7 @@ let autoTimer = null;
 counterTotal.textContent = String(products.length).padStart(2, "0");
 
 function formatMoney(value) {
-  return `$${value.toFixed(2)}`;
+  return new Intl.NumberFormat(undefined, { style: "currency", currency: CURRENCY }).format(value);
 }
 
 function renderHeroProduct(product) {

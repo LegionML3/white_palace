@@ -13,6 +13,12 @@ let globeGroup;
 let treeGroup;
 let currentProduct;
 let activeView = "full";
+let domeMesh;
+let domeHighlight;
+let characterGroup;
+let baseGroup;
+let snowMesh;
+let winterGroup;
 
 try {
   renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
@@ -51,7 +57,9 @@ try {
   floor.receiveShadow = true;
   scene.add(floor);
 } catch (error) {
-  viewer.innerHTML = '<div class="no-webgl">This product viewer needs WebGL.<br>All product options remain available below.</div>';
+  canvas.hidden = true;
+  viewer.insertAdjacentHTML("beforeend", '<div class="no-webgl">The 3D preview is unavailable in this browser.<br>Product options and ordering details are still available.</div>');
+  document.querySelectorAll(".viewer-tools button").forEach((button) => { button.disabled = true; });
 }
 
 function material(color, roughness = 0.6, metalness = 0) {
@@ -83,14 +91,36 @@ const modelHooks = {
 };
 
 function clearGroup() {
-  if (globeGroup) scene.remove(globeGroup);
+  if (globeGroup) {
+    scene.remove(globeGroup);
+    globeGroup.traverse((object) => {
+      if (object.geometry) object.geometry.dispose();
+      if (object.material) {
+        const materials = Array.isArray(object.material) ? object.material : [object.material];
+        materials.forEach((item) => item.dispose());
+      }
+    });
+  }
+  if (winterGroup) {
+    scene.remove(winterGroup);
+    winterGroup.traverse((object) => {
+      if (object.geometry) object.geometry.dispose();
+      if (object.material) object.material.dispose();
+    });
+  }
   globeGroup = new THREE.Group();
   scene.add(globeGroup);
   treeGroup = null;
+  domeMesh = null;
+  domeHighlight = null;
+  characterGroup = null;
+  baseGroup = null;
+  snowMesh = null;
+  winterGroup = null;
 }
 
 function buildDome() {
-  const dome = mesh(
+  domeMesh = mesh(
     new THREE.SphereGeometry(2.15, 48, 36),
     new THREE.MeshPhysicalMaterial({
       color: 0xdaf1ff,
@@ -102,37 +132,62 @@ function buildDome() {
       clearcoat: 1
     })
   );
-  dome.position.y = 0.55;
-  globeGroup.add(dome);
+  domeMesh.position.y = 0.55;
+  globeGroup.add(domeMesh);
 
-  const highlight = mesh(
+  domeHighlight = mesh(
     new THREE.SphereGeometry(0.16, 16, 12),
     new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.8 })
   );
-  highlight.scale.set(0.65, 1.8, 0.25);
-  highlight.position.set(-1.2, 1.55, 1.55);
-  globeGroup.add(highlight);
+  domeHighlight.scale.set(0.65, 1.8, 0.25);
+  domeHighlight.position.set(-1.2, 1.55, 1.55);
+  globeGroup.add(domeHighlight);
 
-  const base = new THREE.Group();
+  baseGroup = new THREE.Group();
   const baseTop = mesh(new THREE.CylinderGeometry(2.05, 2.18, 0.24, 48), material(0xeaf4fa, 0.35));
   baseTop.position.y = -1.43;
-  base.add(baseTop);
+  baseGroup.add(baseTop);
   const baseBody = mesh(new THREE.CylinderGeometry(1.82, 1.98, 0.72, 48), material(0xfafcff, 0.4));
   baseBody.position.y = -1.86;
-  base.add(baseBody);
+  baseGroup.add(baseBody);
   const goldBand = mesh(new THREE.TorusGeometry(1.88, 0.055, 12, 48), material(0xb8842f, 0.25, 0.35));
   goldBand.rotation.x = Math.PI / 2;
   goldBand.position.y = -1.52;
-  base.add(goldBand);
-  globeGroup.add(base);
+  baseGroup.add(goldBand);
+  globeGroup.add(baseGroup);
 
-  const snow = new THREE.Mesh(
+  snowMesh = new THREE.Mesh(
     new THREE.CircleGeometry(1.62, 48),
     new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.9 })
   );
-  snow.rotation.x = -Math.PI / 2;
-  snow.position.y = -1.28;
-  globeGroup.add(snow);
+  snowMesh.rotation.x = -Math.PI / 2;
+  snowMesh.position.y = -1.28;
+  globeGroup.add(snowMesh);
+}
+
+function buildWinterScene() {
+  winterGroup = new THREE.Group();
+  [-3.4, 3.2].forEach((x, index) => {
+    const trunk = mesh(new THREE.CylinderGeometry(0.12, 0.18, 0.8, 12), material(0x9c7455));
+    trunk.position.set(x, -1.42, -1.2 - index * 0.4);
+    winterGroup.add(trunk);
+    [0.8, 0.35, -0.1].forEach((y, tier) => {
+      const fir = mesh(new THREE.ConeGeometry(0.85 - tier * 0.12, 1.05, 18), material(tier === 1 ? 0x668f7f : 0x557f71));
+      fir.position.set(x, y, -1.2 - index * 0.4);
+      winterGroup.add(fir);
+    });
+  });
+
+  for (let index = 0; index < 24; index++) {
+    const flake = mesh(
+      new THREE.SphereGeometry(0.045 + (index % 3) * 0.018, 8, 8),
+      new THREE.MeshBasicMaterial({ color: 0xffffff })
+    );
+    const angle = index * 2.4;
+    flake.position.set(Math.cos(angle) * (2.5 + (index % 4) * 0.35), -0.8 + (index % 6) * 0.55, Math.sin(angle) * 2.2);
+    winterGroup.add(flake);
+  }
+  scene.add(winterGroup);
 }
 
 function buildPenguin() {
@@ -265,8 +320,13 @@ function rebuildScene() {
   if (!scene) return;
   clearGroup();
   buildDome();
+  const firstCharacterChild = globeGroup.children.length;
   themeBuilders[currentProduct.theme]?.();
+  characterGroup = new THREE.Group();
+  globeGroup.children.slice(firstCharacterChild).forEach((child) => characterGroup.add(child));
+  globeGroup.add(characterGroup);
   if (currentProduct.version === "Premium") buildPremiumTree();
+  buildWinterScene();
   applyView(activeView);
 }
 
@@ -281,9 +341,21 @@ function applyView(view) {
   const p = positions[view];
   if (camera) {
     camera.position.set(p[0], p[1], p[2]);
-    controls.target.set(p[3], p[4], p[5]);
-    controls.update();
+    if (controls) {
+      controls.target.set(p[3], p[4], p[5]);
+      controls.update();
+    }
   }
+
+  if (domeMesh) {
+    domeMesh.visible = view !== "base";
+    domeMesh.material.opacity = view === "inside" ? 0.07 : 0.16;
+  }
+  if (domeHighlight) domeHighlight.visible = view !== "base";
+  if (characterGroup) characterGroup.visible = view !== "base";
+  if (treeGroup) treeGroup.visible = view !== "base";
+  if (snowMesh) snowMesh.visible = view !== "base";
+  if (winterGroup) winterGroup.visible = view === "winter";
 
   const captions = { full: "3D View", inside: "Inside Globe", base: "Base & Detail", winter: "Winter Scene" };
   document.getElementById("viewerCaption").textContent = captions[view];
@@ -293,13 +365,21 @@ function applyView(view) {
 }
 
 function formatMoney(value) {
-  return `${CURRENCY === "USD" ? "$" : CURRENCY + " "}${value.toFixed(2)}`;
+  return new Intl.NumberFormat(undefined, { style: "currency", currency: CURRENCY }).format(value);
 }
 
 function resolveProduct() {
   const params = new URLSearchParams(window.location.search);
   const requestedId = params.get("id");
-  return products.find((product) => product.id === requestedId) || products[0];
+  const product = products.find((item) => item.id === requestedId);
+  if (!requestedId) return products[0];
+  if (!product) {
+    const notice = document.getElementById("productNotice");
+    notice.hidden = false;
+    notice.textContent = "That snow globe link is no longer available. Showing a featured design instead.";
+    return products[0];
+  }
+  return product;
 }
 
 function updateProduct(product, updateUrl = true) {
@@ -317,10 +397,11 @@ function updateProduct(product, updateUrl = true) {
     button.setAttribute("aria-pressed", String(active));
   });
 
-  const price = calculateProductPrice(product);
+  const price = getProductPrice(product);
   document.getElementById("mainPrice").textContent = formatMoney(price);
   document.getElementById("orderPrice").textContent = formatMoney(price);
   document.getElementById("quantity").value = "1";
+  document.getElementById("reservationStatus").textContent = "";
   rebuildScene();
 
   if (updateUrl) {
@@ -335,20 +416,33 @@ function findMatchingProduct(theme, edition, version) {
     product.theme === theme &&
     product.edition === edition &&
     product.version === version
-  ) || products.find((product) =>
-    product.theme === theme &&
-    product.edition === edition
-  ) || products.find((product) =>
-    product.theme === theme &&
-    product.version === version
   );
+}
+
+function updateOptions() {
+  const editionSelect = document.getElementById("editionSelect");
+  const editions = [...new Set(products
+    .filter((product) => product.theme === currentProduct.theme)
+    .map((product) => product.edition))];
+  editionSelect.innerHTML = editions.map((edition) => {
+    const available = Boolean(findMatchingProduct(currentProduct.theme, edition, currentProduct.version));
+    return `<option value="${edition}"${available ? "" : " disabled"}>${edition}${available ? "" : " · unavailable for this edition"}</option>`;
+  }).join("");
+  editionSelect.value = currentProduct.edition;
+
+  document.querySelectorAll("[data-version]").forEach((button) => {
+    button.disabled = !findMatchingProduct(currentProduct.theme, currentProduct.edition, button.dataset.version);
+  });
 }
 
 function populateSwitcher() {
   const switcher = document.getElementById("productSwitcher");
-  switcher.innerHTML = products.map((product) =>
-    `<option value="${product.id}">${product.name} · ${product.edition} · ${product.version}${product.version === "Premium" ? " + Tree" : ""}</option>`
-  ).join("");
+  switcher.innerHTML = THEMES.map((theme) => `
+    <optgroup label="${theme}">
+      ${products.filter((product) => product.theme === theme).map((product) =>
+        `<option value="${product.id}">${product.edition} · ${product.version}${product.version === "Premium" ? " + Tree" : ""}</option>`
+      ).join("")}
+    </optgroup>`).join("");
   switcher.value = currentProduct.id;
 }
 
@@ -357,6 +451,7 @@ document.querySelectorAll("[data-version]").forEach((button) => {
     const match = findMatchingProduct(currentProduct.theme, currentProduct.edition, button.dataset.version);
     if (match) {
       updateProduct(match);
+      updateOptions();
       populateSwitcher();
     }
   });
@@ -366,6 +461,7 @@ document.getElementById("editionSelect").addEventListener("change", (event) => {
   const match = findMatchingProduct(currentProduct.theme, event.target.value, currentProduct.version);
   if (match) {
     updateProduct(match);
+    updateOptions();
     populateSwitcher();
   } else {
     event.target.value = currentProduct.edition;
@@ -374,7 +470,11 @@ document.getElementById("editionSelect").addEventListener("change", (event) => {
 
 document.getElementById("productSwitcher").addEventListener("change", (event) => {
   const match = products.find((product) => product.id === event.target.value);
-  if (match) updateProduct(match);
+  if (match) {
+    updateProduct(match);
+    updateOptions();
+    populateSwitcher();
+  }
 });
 
 document.querySelectorAll(".thumb").forEach((button) => {
@@ -383,18 +483,35 @@ document.querySelectorAll(".thumb").forEach((button) => {
 
 document.getElementById("resetCamera").addEventListener("click", () => applyView("full"));
 document.getElementById("zoomIn").addEventListener("click", () => {
-  camera.position.multiplyScalar(0.86);
-  controls.update();
+  if (camera && controls) {
+    camera.position.multiplyScalar(0.86);
+    controls.update();
+  }
 });
 document.getElementById("zoomOut").addEventListener("click", () => {
-  camera.position.multiplyScalar(1.16);
-  controls.update();
+  if (camera && controls) {
+    camera.position.multiplyScalar(1.16);
+    controls.update();
+  }
 });
 
 document.getElementById("reserveButton").addEventListener("click", (event) => {
   const quantity = document.getElementById("quantity").value;
-  event.currentTarget.textContent = `${quantity} reserved`;
-  event.currentTarget.disabled = true;
+  const request = {
+    productId: currentProduct.id,
+    productName: `${currentProduct.name} · ${currentProduct.edition} · ${currentProduct.version}`,
+    quantity: Number(quantity),
+    createdAt: new Date().toISOString()
+  };
+  const status = document.getElementById("reservationStatus");
+  try {
+    const saved = JSON.parse(window.localStorage.getItem("whitePalaceReservationRequests") || "[]");
+    saved.push(request);
+    window.localStorage.setItem("whitePalaceReservationRequests", JSON.stringify(saved));
+    status.textContent = "Request saved on this device only. It has not been sent to the store; contact White Palace to confirm availability.";
+  } catch (error) {
+    status.textContent = "This browser could not save the request. No order was submitted.";
+  }
 });
 
 function resizeRenderer() {
@@ -411,12 +528,13 @@ function animate() {
   if (globeGroup && !prefersReducedMotion) {
     globeGroup.rotation.y = Math.sin(Date.now() * 0.00035) * 0.08;
   }
-  controls.update();
-  renderer.render(scene, camera);
+  if (controls) controls.update();
+  if (scene && camera) renderer.render(scene, camera);
 }
 
 window.addEventListener("resize", resizeRenderer);
 currentProduct = resolveProduct();
+updateOptions();
 populateSwitcher();
 updateProduct(currentProduct, false);
 resizeRenderer();

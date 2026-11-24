@@ -29,6 +29,8 @@
     </nav>
   </header>
 
+  <p class="product-notice" id="productNotice" role="status" hidden></p>
+
   <main class="product-page">
     <section class="media-column" aria-label="Snow globe 3D gallery">
       <div class="viewer" id="viewer">
@@ -52,10 +54,9 @@
     <section class="product-details" aria-labelledby="productTitle">
       <span class="theme-badge" id="themeBadge">Penguin</span>
       <h1 id="productTitle">Penguin · Frosted Snow Globe</h1>
-      <div class="rating">
-        <span class="stars" aria-label="5 out of 5 stars">★★★★★</span>
+      <div class="product-meta">
         <span>White Palace Collection</span>
-        <span class="availability">In stock</span>
+        <span class="availability">Availability confirmed when you contact us</span>
       </div>
       <p class="price" id="mainPrice">$5.00</p>
 
@@ -73,7 +74,6 @@
           <option value="Frosted">Frosted</option>
           <option value="Classic">Classic</option>
           <option value="Heirloom">Heirloom</option>
-          <option value="Midnight">Midnight</option>
         </select>
       </fieldset>
 
@@ -92,8 +92,8 @@
 
     <aside class="order-card" aria-label="Order options">
       <p class="order-price" id="orderPrice">$5.00</p>
-      <p class="delivery"><strong>Shipping:</strong><br>Market pickup or winter delivery available.</p>
-      <span class="stock">In stock and ready to reserve</span>
+      <p class="delivery"><strong>Delivery:</strong><br>Pickup and delivery details are confirmed when we respond to your request.</p>
+      <span class="stock">Availability is confirmed with your request.</span>
       <div class="quantity-row">
         <label for="quantity">Quantity</label>
         <select id="quantity">
@@ -103,7 +103,8 @@
           <option value="4">4</option>
         </select>
       </div>
-      <button class="reserve-button" type="button" id="reserveButton">Add to Order / Reserve</button>
+      <button class="reserve-button" type="button" id="reserveButton">Save reservation request</button>
+      <p class="reservation-status" id="reservationStatus" role="status" aria-live="polite"></p>
       <a class="browse-link" href="index.html#catalog">Browse all 45 designs ↗</a>
     </aside>
   </main>

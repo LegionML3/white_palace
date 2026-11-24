@@ -1,14 +1,11 @@
 /*
  * WHITE PALACE PRICE SETTINGS
- * Change BASE_GLOBE_PRICE or PREMIUM_TREE_UPCHARGE here to update all catalog prices.
- * Standard price = BASE_GLOBE_PRICE + EDITION_OVERRIDES[edition].
- * Premium price = BASE_GLOBE_PRICE + PREMIUM_TREE_UPCHARGE + EDITION_OVERRIDES[edition].
- * All dollar values are numbers; app.js formats them for display.
+ * Change STANDARD_PRICE, PREMIUM_TREE_ADDON, CURRENCY, or EDITION_OVERRIDES here.
+ * Standard = STANDARD_PRICE + edition override; Premium adds PREMIUM_TREE_ADDON.
+ * getProductPrice() is the single source for catalog and product-page calculations.
  */
-const BASE_GLOBE_PRICE = 5;
-const PREMIUM_TREE_UPCHARGE = 2;
-// Product-detail compatible aliases for the centralized pricing API.
-const STANDARD_PRICE = BASE_GLOBE_PRICE;
+const STANDARD_PRICE = 5;
+const PREMIUM_TREE_ADDON = 2;
 const CURRENCY = "USD";
 const EDITION_OVERRIDES = {
   "Frosted": 0,
@@ -30,14 +27,10 @@ const THEME_DETAILS = {
   "Christmas Tree": { slug: "christmas-tree", outline: "TREE", finish: "Pine and pearl", accent: "#557f71" }
 };
 
-function formatPrice(theme, edition, version) {
-  const editionOverride = EDITION_OVERRIDES[edition] || 0;
-  const premium = version === "Premium" ? PREMIUM_TREE_UPCHARGE : 0;
-  return BASE_GLOBE_PRICE + editionOverride + premium;
-}
-
-function calculateProductPrice(product) {
-  return formatPrice(product.theme, product.edition, product.version);
+function getProductPrice(product) {
+  const editionOverride = EDITION_OVERRIDES[product.edition] || 0;
+  const treeAddon = product.version === "Premium" ? PREMIUM_TREE_ADDON : 0;
+  return STANDARD_PRICE + editionOverride + treeAddon;
 }
 
 function createCatalog() {
@@ -54,7 +47,7 @@ function createCatalog() {
           edition,
           finish: THEME_DETAILS[theme].finish,
           version,
-          price: formatPrice(theme, edition, version),
+          price: getProductPrice({ edition, version }),
           image: null,
           alt: `${edition} ${theme} ${version === "Premium" ? "snow globe with a miniature tree" : "snow globe"}`
         });
@@ -72,7 +65,7 @@ function createCatalog() {
       edition: "Midnight",
       finish: THEME_DETAILS[theme].finish,
       version: "Standard",
-      price: formatPrice(theme, "Midnight", "Standard"),
+      price: getProductPrice({ edition: "Midnight", version: "Standard" }),
       image: null,
       alt: `Midnight ${theme} snow globe`
     });
