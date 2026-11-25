@@ -117,7 +117,7 @@ function renderCatalog() {
           <span class="card-edition">${product.finish} · ${product.version}${product.hasTree ? " · with tree" : ""}</span>
           <span class="card-price">${formatMoney(product.price)}</span>
         </div>
-        <button class="card-preorder" type="button" data-preorder-product="${product.id}">Preorder</button>
+        <button class="card-preorder" type="button" data-preorder-product="${product.id}">Reserve</button>
       </div>`;
 
     productGrid.appendChild(card);
@@ -229,17 +229,13 @@ globeSearch.addEventListener("input", () => {
           <span class="card-edition">${product.finish} · ${product.version}${product.hasTree ? " · with tree" : ""}</span>
           <span class="card-price">${formatMoney(product.price)}</span>
         </div>
-        <button class="card-preorder" type="button" data-preorder-product="${product.id}">Preorder</button>
+        <button class="card-preorder" type="button" data-preorder-product="${product.id}">Reserve</button>
       </div>`;
     productGrid.appendChild(card);
   });
 
   document.getElementById("loadMore").classList.toggle("hidden", !filtered.length || visibleLimit >= filtered.length);
   document.getElementById("loadMore").textContent = `Show more · ${Math.max(0, filtered.length - visibleLimit)} remaining`;
-});
-
-document.getElementById("contact").addEventListener("click", () => {
-  document.querySelector(".utility-links a:last-child").focus();
 });
 
 document.getElementById("previousProduct").addEventListener("click", () => {

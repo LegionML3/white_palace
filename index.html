@@ -27,8 +27,11 @@
 
   <header class="topbar">
     <a class="brand" href="#" aria-label="White Palace home">
-      <span class="brand-name">White Palace</span>
-      <span class="brand-slogan">A palace of white beyond the glass of frosted white</span>
+      <span class="brand-mark" aria-hidden="true"><img src="assets/white-palace-logo.jpeg" alt=""></span>
+      <span class="brand-copy">
+        <span class="brand-name">White Palace</span>
+        <span class="brand-slogan">A palace of white beyond the glass of frosted white</span>
+      </span>
     </a>
 
     <nav class="category-nav" aria-label="Globe categories" id="themeFilters">
@@ -43,11 +46,6 @@
     </nav>
 
     <div class="utility">
-      <nav class="utility-links" aria-label="Utility navigation">
-        <a href="#catalog">Find us</a>
-        <a href="#catalog">Gift ideas</a>
-        <a href="#contact">Contact</a>
-      </nav>
       <button class="search" type="button" aria-label="Search snow globes" aria-expanded="false" aria-controls="searchPanel">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <circle cx="10.5" cy="10.5" r="5.5" stroke="currentColor" stroke-width="1.8"/>
@@ -74,9 +72,9 @@
         </g>
       </svg>
 
-      <div class="hero-label">A closer look</div>
-      <h1 class="headline">Made for<br>winter wonder.</h1>
-      <p class="hero-slogan">Handmade snow globes, in glass and frosted white.</p>
+      <div class="hero-label">Made by hand</div>
+      <h1 class="headline">Little worlds<br>of winter.</h1>
+      <p class="hero-slogan">Handmade mini snow globes, each with a winter scene.</p>
       <div class="counter" aria-live="polite"><span id="counterCurrent">01</span> / <span id="counterTotal">45</span></div>
 
       <h2 class="outline-word" id="outlineWord" aria-hidden="true">PENGUIN</h2>
@@ -93,8 +91,8 @@
           <span class="variant" id="variantName">Frosted White · Standard</span>
           <span class="price" id="price">$5.00</span>
         </div>
-        <a class="explore" href="#catalog">Explore this style <span aria-hidden="true">↗</span></a>
-        <button class="hero-preorder" type="button" id="heroPreorder">Preorder this globe</button>
+        <a class="explore" href="#catalog">See all designs <span aria-hidden="true">↗</span></a>
+        <button class="hero-preorder" type="button" id="heroPreorder">Reserve this globe</button>
       </div>
 
       <div class="bottom-area">
@@ -109,9 +107,9 @@
     <section class="catalog" id="catalog" aria-labelledby="catalogTitle">
       <div class="catalog-heading">
         <div>
-          <p class="eyebrow">Curated for every winter story</p>
-          <h2 id="catalogTitle">Find the perfect snow globe</h2>
-          <p class="catalog-intro">Choose a theme and edition, or browse the complete collection at your own pace.</p>
+          <p class="eyebrow">Handmade mini snow globes</p>
+          <h2 id="catalogTitle">Choose your winter globe</h2>
+          <p class="catalog-intro">Browse all 45 designs, then pick Standard or Premium + Tree.</p>
         </div>
         <p class="catalog-count" id="catalogCount" aria-live="polite">45 designs</p>
       </div>
@@ -129,15 +127,13 @@
     </section>
   </main>
 
-  <button class="contact" id="contact" type="button">Contact Us</button>
-
-  <dialog class="preorder-dialog" id="preorderDialog" aria-label="White Palace preorder request" aria-labelledby="preorderTitle">
+  <dialog class="preorder-dialog" id="preorderDialog" aria-label="Reserve a mini snow globe" aria-labelledby="preorderTitle">
     <div class="preorder-shell">
       <button class="preorder-close" type="button" data-preorder-close aria-label="Close preorder dialog">×</button>
       <form class="preorder-form" id="preorderForm" novalidate>
-        <p class="preorder-eyebrow">A winter keepsake, reserved for you</p>
-        <h2 id="preorderTitle">Preorder request</h2>
-        <p class="preorder-intro">Send your request and we’ll reply to confirm availability and pickup details.</p>
+        <p class="preorder-eyebrow">A small winter scene, made by hand</p>
+        <h2 id="preorderTitle">Reserve a mini snow globe</h2>
+        <p class="preorder-intro">Choose a design and tell us how to reach you. We’ll reply to confirm availability and pickup or delivery.</p>
         <div class="preorder-fields">
           <label class="preorder-field" for="preorderProduct">Choose a design
             <select id="preorderProduct" name="product_selector"></select>
@@ -151,7 +147,7 @@
           <label class="preorder-field" for="preorderName">Full name <span aria-hidden="true">*</span>
             <input id="preorderName" name="name" autocomplete="name" required>
           </label>
-          <label class="preorder-field" for="preorderContact">Customer email / contact <span aria-hidden="true">*</span>
+          <label class="preorder-field" for="preorderContact">Email or contact handle <span aria-hidden="true">*</span>
             <input id="preorderContact" name="email" autocomplete="email" required>
           </label>
           <label class="preorder-field preorder-note" for="preorderNotes">Pickup or special request <span>(optional)</span>
@@ -160,7 +156,7 @@
         </div>
         <input class="preorder-honeypot" type="text" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true">
         <section class="preorder-summary" aria-labelledby="preorderSummaryTitle">
-          <h3 id="preorderSummaryTitle">Your request</h3>
+          <h3 id="preorderSummaryTitle">Your selection</h3>
           <dl>
             <div><dt>Product</dt><dd id="preorderSummaryProduct"></dd></div>
             <div><dt>Theme</dt><dd id="preorderSummaryTheme"></dd></div>
@@ -177,14 +173,14 @@
         <input type="hidden" name="order_summary">
         <p class="preorder-message" id="preorderMessage" role="status" aria-live="polite"></p>
         <button class="preorder-submit" type="submit">
-          <span data-submit-label>Send preorder request</span>
+          <span data-submit-label>Send request</span>
           <span class="preorder-spinner" aria-hidden="true"></span>
         </button>
       </form>
       <section class="preorder-success" id="preorderSuccess" aria-live="polite" hidden>
         <p class="preorder-eyebrow">Request received</p>
-        <h2 id="preorderSuccessTitle">Thank you for reserving.</h2>
-        <p>We’ll be in touch to confirm your preorder.</p>
+        <h2 id="preorderSuccessTitle">Thanks — we’ve got your request.</h2>
+        <p>We’ll be in touch to confirm availability and next steps.</p>
         <p class="preorder-reference">Reference <strong id="preorderReference"></strong></p>
         <div class="preorder-success-summary" id="preorderSuccessSummary"></div>
         <button class="preorder-submit" type="button" data-preorder-close>Close</button>

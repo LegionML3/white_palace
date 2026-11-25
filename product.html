@@ -21,8 +21,11 @@
 <body>
   <header class="topbar">
     <a class="brand" href="index.html" aria-label="White Palace home">
-      <span class="brand-name">White Palace</span>
-      <span class="brand-slogan">A palace of white beyond the glass of frosted white</span>
+      <span class="brand-mark" aria-hidden="true"><img src="assets/white-palace-logo.jpeg" alt=""></span>
+      <span class="brand-copy">
+        <span class="brand-name">White Palace</span>
+        <span class="brand-slogan">A palace of white beyond the glass of frosted white</span>
+      </span>
     </a>
     <nav class="breadcrumb" aria-label="Breadcrumb">
       <a href="index.html">Catalog</a><span>/</span><span id="breadcrumbTheme">Snow globe</span>
@@ -56,7 +59,7 @@
       <h1 id="productTitle">Penguin · Frosted Snow Globe</h1>
       <div class="product-meta">
         <span>White Palace Collection</span>
-        <span class="availability">Availability confirmed when you contact us</span>
+        <span>Handmade mini snow globe</span>
       </div>
       <p class="price" id="mainPrice">$5.00</p>
 
@@ -83,17 +86,17 @@
       </fieldset>
 
       <ul class="highlights">
-        <li>Handmade glass globe with a frosted crystal finish</li>
-        <li>Gentle snow chamber and sculpted winter character</li>
-        <li>Gift-ready presentation box included</li>
-        <li>Choose Standard or Premium with an internal evergreen tree</li>
+        <li>Handmade mini globe with a glass dome</li>
+        <li>A winter character in a gentle snowfall</li>
+        <li>Gift box included</li>
+        <li>Choose Standard or Premium + Tree</li>
       </ul>
     </section>
 
     <aside class="order-card" aria-label="Order options">
       <p class="order-price" id="orderPrice">$5.00</p>
-      <p class="delivery"><strong>Delivery:</strong><br>Pickup and delivery details are confirmed when we respond to your request.</p>
-      <span class="stock">Availability is confirmed with your request.</span>
+      <p class="delivery"><strong>Pickup or delivery:</strong><br>We’ll arrange the details after you send a request.</p>
+      <span class="stock">We’ll confirm availability when we reply.</span>
       <div class="quantity-row">
         <label for="quantity">Quantity</label>
         <select id="quantity">
@@ -103,19 +106,19 @@
           <option value="4">4</option>
         </select>
       </div>
-      <button class="reserve-button" type="button" id="reserveButton">Preorder / Reserve</button>
+      <button class="reserve-button" type="button" id="reserveButton">Reserve this globe</button>
       <p class="reservation-status" id="reservationStatus" role="status" aria-live="polite"></p>
       <a class="browse-link" href="index.html#catalog">Browse all 45 designs ↗</a>
     </aside>
   </main>
 
-  <dialog class="preorder-dialog" id="preorderDialog" aria-label="White Palace preorder request" aria-labelledby="preorderTitle">
+  <dialog class="preorder-dialog" id="preorderDialog" aria-label="Reserve a mini snow globe" aria-labelledby="preorderTitle">
     <div class="preorder-shell">
       <button class="preorder-close" type="button" data-preorder-close aria-label="Close preorder dialog">×</button>
       <form class="preorder-form" id="preorderForm" novalidate>
-        <p class="preorder-eyebrow">A winter keepsake, reserved for you</p>
-        <h2 id="preorderTitle">Preorder request</h2>
-        <p class="preorder-intro">Send your request and we’ll reply to confirm availability and pickup details.</p>
+        <p class="preorder-eyebrow">A small winter scene, made by hand</p>
+        <h2 id="preorderTitle">Reserve a mini snow globe</h2>
+        <p class="preorder-intro">Choose a design and tell us how to reach you. We’ll reply to confirm availability and pickup or delivery.</p>
         <div class="preorder-fields">
           <label class="preorder-field" for="preorderProduct">Choose a design
             <select id="preorderProduct" name="product_selector"></select>
@@ -129,7 +132,7 @@
           <label class="preorder-field" for="preorderName">Full name <span aria-hidden="true">*</span>
             <input id="preorderName" name="name" autocomplete="name" required>
           </label>
-          <label class="preorder-field" for="preorderContact">Customer email / contact <span aria-hidden="true">*</span>
+          <label class="preorder-field" for="preorderContact">Email or contact handle <span aria-hidden="true">*</span>
             <input id="preorderContact" name="email" autocomplete="email" required>
           </label>
           <label class="preorder-field preorder-note" for="preorderNotes">Pickup or special request <span>(optional)</span>
@@ -138,7 +141,7 @@
         </div>
         <input class="preorder-honeypot" type="text" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true">
         <section class="preorder-summary" aria-labelledby="preorderSummaryTitle">
-          <h3 id="preorderSummaryTitle">Your request</h3>
+          <h3 id="preorderSummaryTitle">Your selection</h3>
           <dl>
             <div><dt>Product</dt><dd id="preorderSummaryProduct"></dd></div>
             <div><dt>Theme</dt><dd id="preorderSummaryTheme"></dd></div>
@@ -155,14 +158,14 @@
         <input type="hidden" name="order_summary">
         <p class="preorder-message" id="preorderMessage" role="status" aria-live="polite"></p>
         <button class="preorder-submit" type="submit">
-          <span data-submit-label>Send preorder request</span>
+          <span data-submit-label>Send request</span>
           <span class="preorder-spinner" aria-hidden="true"></span>
         </button>
       </form>
       <section class="preorder-success" id="preorderSuccess" aria-live="polite" hidden>
         <p class="preorder-eyebrow">Request received</p>
-        <h2 id="preorderSuccessTitle">Thank you for reserving.</h2>
-        <p>We’ll be in touch to confirm your preorder.</p>
+        <h2 id="preorderSuccessTitle">Thanks — we’ve got your request.</h2>
+        <p>We’ll be in touch to confirm availability and next steps.</p>
         <p class="preorder-reference">Reference <strong id="preorderReference"></strong></p>
         <div class="preorder-success-summary" id="preorderSuccessSummary"></div>
         <button class="preorder-submit" type="button" data-preorder-close>Close</button>

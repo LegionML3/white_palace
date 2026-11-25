@@ -1,7 +1,7 @@
 import { CATALOG_ITEMS, PRICING_CONFIG, getItemPrice } from "./data.js";
 
 const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
-const PREORDER_ACCESS_KEY = "c8b9a4c2-5b13-40fe-bfae-28d1cd5673e8";
+const PREORDER_ACCESS_KEY = "YOUR_ACCESS_KEY_HERE";
 
 const products = CATALOG_ITEMS.map((item) => ({
   ...item,
@@ -104,7 +104,7 @@ if (dialog) {
     submitting = value;
     submitButton.disabled = value;
     submitButton.classList.toggle("is-submitting", value);
-    submitLabel.textContent = value ? "Sending request…" : "Send preorder request";
+    submitLabel.textContent = value ? "Sending request…" : "Send request";
   }
 
   document.addEventListener("whitepalace:preorder", (event) => {
@@ -140,7 +140,7 @@ if (dialog) {
 
     const accessKey = PREORDER_ACCESS_KEY.trim();
     if (!accessKey || accessKey === "YOUR_ACCESS_KEY_HERE") {
-      message.textContent = "Preorder requests aren’t available yet. Site owner: add your Web3Forms access key in preorder.js.";
+      message.textContent = "The request form isn’t connected yet. Site owner: add the Web3Forms access key in preorder.js.";
       return;
     }
 
