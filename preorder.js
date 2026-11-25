@@ -1,7 +1,7 @@
 import { CATALOG_ITEMS, PRICING_CONFIG, getItemPrice } from "./data.js";
 
 const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
-const PREORDER_ACCESS_KEY = "YOUR_ACCESS_KEY_HERE";
+const PREORDER_ACCESS_KEY = "c8b9a4c2-5b13-40fe-bfae-28d1cd5673e8";
 
 const products = CATALOG_ITEMS.map((item) => ({
   ...item,
