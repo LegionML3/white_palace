@@ -94,6 +94,7 @@
           <span class="price" id="price">$5.00</span>
         </div>
         <a class="explore" href="#catalog">Explore this style <span aria-hidden="true">↗</span></a>
+        <button class="hero-preorder" type="button" id="heroPreorder">Preorder this globe</button>
       </div>
 
       <div class="bottom-area">
@@ -130,6 +131,68 @@
 
   <button class="contact" id="contact" type="button">Contact Us</button>
 
+  <dialog class="preorder-dialog" id="preorderDialog" aria-label="White Palace preorder request" aria-labelledby="preorderTitle">
+    <div class="preorder-shell">
+      <button class="preorder-close" type="button" data-preorder-close aria-label="Close preorder dialog">×</button>
+      <form class="preorder-form" id="preorderForm" novalidate>
+        <p class="preorder-eyebrow">A winter keepsake, reserved for you</p>
+        <h2 id="preorderTitle">Preorder request</h2>
+        <p class="preorder-intro">Send your request and we’ll reply to confirm availability and pickup details.</p>
+        <div class="preorder-fields">
+          <label class="preorder-field" for="preorderProduct">Choose a design
+            <select id="preorderProduct" name="product_selector"></select>
+          </label>
+          <label class="preorder-field" for="preorderQuantity">Quantity
+            <select id="preorderQuantity" name="quantity_selector">
+              <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+              <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+            </select>
+          </label>
+          <label class="preorder-field" for="preorderName">Full name <span aria-hidden="true">*</span>
+            <input id="preorderName" name="name" autocomplete="name" required>
+          </label>
+          <label class="preorder-field" for="preorderContact">Customer email / contact <span aria-hidden="true">*</span>
+            <input id="preorderContact" name="email" autocomplete="email" required>
+          </label>
+          <label class="preorder-field preorder-note" for="preorderNotes">Pickup or special request <span>(optional)</span>
+            <textarea id="preorderNotes" name="notes" rows="3"></textarea>
+          </label>
+        </div>
+        <input class="preorder-honeypot" type="text" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <section class="preorder-summary" aria-labelledby="preorderSummaryTitle">
+          <h3 id="preorderSummaryTitle">Your request</h3>
+          <dl>
+            <div><dt>Product</dt><dd id="preorderSummaryProduct"></dd></div>
+            <div><dt>Theme</dt><dd id="preorderSummaryTheme"></dd></div>
+            <div><dt>Edition</dt><dd id="preorderSummaryEdition"></dd></div>
+            <div><dt>Quantity</dt><dd id="preorderSummaryQuantity"></dd></div>
+            <div class="preorder-total"><dt>Total</dt><dd id="preorderSummaryTotal"></dd></div>
+          </dl>
+        </section>
+        <input type="hidden" name="product_name">
+        <input type="hidden" name="theme">
+        <input type="hidden" name="edition">
+        <input type="hidden" name="quantity">
+        <input type="hidden" name="total_price">
+        <input type="hidden" name="order_summary">
+        <p class="preorder-message" id="preorderMessage" role="status" aria-live="polite"></p>
+        <button class="preorder-submit" type="submit">
+          <span data-submit-label>Send preorder request</span>
+          <span class="preorder-spinner" aria-hidden="true"></span>
+        </button>
+      </form>
+      <section class="preorder-success" id="preorderSuccess" aria-live="polite" hidden>
+        <p class="preorder-eyebrow">Request received</p>
+        <h2 id="preorderSuccessTitle">Thank you for reserving.</h2>
+        <p>We’ll be in touch to confirm your preorder.</p>
+        <p class="preorder-reference">Reference <strong id="preorderReference"></strong></p>
+        <div class="preorder-success-summary" id="preorderSuccessSummary"></div>
+        <button class="preorder-submit" type="button" data-preorder-close>Close</button>
+      </section>
+    </div>
+  </dialog>
+
   <script type="module" src="app.js"></script>
+  <script type="module" src="preorder.js"></script>
 </body>
 </html>

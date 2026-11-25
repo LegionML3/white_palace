@@ -501,23 +501,11 @@ document.getElementById("zoomOut").addEventListener("click", () => {
   }
 });
 
-document.getElementById("reserveButton").addEventListener("click", (event) => {
+document.getElementById("reserveButton").addEventListener("click", () => {
   const quantity = document.getElementById("quantity").value;
-  const request = {
-    productId: currentProduct.id,
-    productName: `${currentProduct.name} · ${currentProduct.finish} · ${currentProduct.version}`,
-    quantity: Number(quantity),
-    createdAt: new Date().toISOString()
-  };
-  const status = document.getElementById("reservationStatus");
-  try {
-    const saved = JSON.parse(window.localStorage.getItem("whitePalaceReservationRequests") || "[]");
-    saved.push(request);
-    window.localStorage.setItem("whitePalaceReservationRequests", JSON.stringify(saved));
-    status.textContent = "Request saved on this device only. It has not been sent to the store; contact White Palace to confirm availability.";
-  } catch (error) {
-    status.textContent = "This browser could not save the request. No order was submitted.";
-  }
+  document.dispatchEvent(new CustomEvent("whitepalace:preorder", {
+    detail: { productId: currentProduct.id, quantity: Number(quantity) }
+  }));
 });
 
 function resizeRenderer() {

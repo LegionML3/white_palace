@@ -117,6 +117,7 @@ function renderCatalog() {
           <span class="card-edition">${product.finish} · ${product.version}${product.hasTree ? " · with tree" : ""}</span>
           <span class="card-price">${formatMoney(product.price)}</span>
         </div>
+        <button class="card-preorder" type="button" data-preorder-product="${product.id}">Preorder</button>
       </div>`;
 
     productGrid.appendChild(card);
@@ -228,6 +229,7 @@ globeSearch.addEventListener("input", () => {
           <span class="card-edition">${product.finish} · ${product.version}${product.hasTree ? " · with tree" : ""}</span>
           <span class="card-price">${formatMoney(product.price)}</span>
         </div>
+        <button class="card-preorder" type="button" data-preorder-product="${product.id}">Preorder</button>
       </div>`;
     productGrid.appendChild(card);
   });
@@ -251,6 +253,12 @@ document.getElementById("nextProduct").addEventListener("click", () => {
 document.getElementById("loadMore").addEventListener("click", () => {
   visibleLimit += 9;
   renderCatalog();
+});
+
+document.getElementById("heroPreorder").addEventListener("click", () => {
+  document.dispatchEvent(new CustomEvent("whitepalace:preorder", {
+    detail: { productId: products[currentIndex].id, quantity: 1 }
+  }));
 });
 
 selectTheme("Penguin");
