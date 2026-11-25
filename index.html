@@ -35,30 +35,32 @@
     </a>
 
     <nav class="category-nav" aria-label="Globe categories" id="themeFilters">
-      <button class="nav-box active" type="button" data-theme="All">All globes</button>
-      <button class="nav-box" type="button" data-theme="Penguin">Penguin</button>
-      <button class="nav-box" type="button" data-theme="Santa">Santa</button>
-      <button class="nav-box" type="button" data-theme="Star">Star</button>
-      <button class="nav-box" type="button" data-theme="Reindeer">Reindeer</button>
-      <button class="nav-box" type="button" data-theme="Elf">Elf</button>
-      <button class="nav-box" type="button" data-theme="Snowman">Snowman</button>
-      <button class="nav-box" type="button" data-theme="Christmas Tree">Tree</button>
+      <span class="theme-indicator" aria-hidden="true"></span>
+      <button class="nav-box active" type="button" data-theme="All" aria-pressed="true">All globes</button>
+      <button class="nav-box" type="button" data-theme="Penguin" aria-pressed="false">Penguin</button>
+      <button class="nav-box" type="button" data-theme="Santa" aria-pressed="false">Santa</button>
+      <button class="nav-box" type="button" data-theme="Star" aria-pressed="false">Star</button>
+      <button class="nav-box" type="button" data-theme="Reindeer" aria-pressed="false">Reindeer</button>
+      <button class="nav-box" type="button" data-theme="Elf" aria-pressed="false">Elf</button>
+      <button class="nav-box" type="button" data-theme="Snowman" aria-pressed="false">Snowman</button>
+      <button class="nav-box" type="button" data-theme="Christmas Tree" aria-pressed="false">Christmas Tree</button>
     </nav>
 
-    <div class="utility">
-      <button class="search" type="button" aria-label="Search snow globes" aria-expanded="false" aria-controls="searchPanel">
+    <form class="topbar-search" id="catalogSearchForm" role="search">
+      <label class="sr-only" for="globeSearch">Search the snow globe catalog</label>
+      <div class="search-field">
+        <input id="globeSearch" type="search" placeholder="Search globes, themes, finishes…" autocomplete="off" aria-controls="searchSuggestions" aria-expanded="false">
+        <button class="search-clear" id="clearSearch" type="button" aria-label="Clear search" hidden>×</button>
+      </div>
+      <button class="search-submit" type="submit" aria-label="Show matching globes">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <circle cx="10.5" cy="10.5" r="5.5" stroke="currentColor" stroke-width="1.8"/>
           <path d="M15 15l4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
         </svg>
       </button>
-    </div>
+      <div class="search-suggestions" id="searchSuggestions" role="listbox" aria-label="Matching snow globes" hidden></div>
+    </form>
   </header>
-
-  <div class="search-panel" id="searchPanel" role="search" aria-hidden="true">
-    <label for="globeSearch">Search the collection</label>
-    <input id="globeSearch" type="search" placeholder="Theme, finish or edition">
-  </div>
 
   <main>
     <section class="hero" id="hero" aria-label="Featured snow globes">
@@ -75,7 +77,7 @@
       <div class="hero-label">Made by hand</div>
       <h1 class="headline">Little worlds<br>of winter.</h1>
       <p class="hero-slogan">Handmade mini snow globes, each with a winter scene.</p>
-      <div class="counter" aria-live="polite"><span id="counterCurrent">01</span> / <span id="counterTotal">45</span></div>
+      <div class="counter" aria-live="polite"><span id="counterCurrent">01</span> / <span id="counterTotal">28</span></div>
 
       <h2 class="outline-word" id="outlineWord" aria-hidden="true">PENGUIN</h2>
 
@@ -109,9 +111,9 @@
         <div>
           <p class="eyebrow">Handmade mini snow globes</p>
           <h2 id="catalogTitle">Choose your winter globe</h2>
-          <p class="catalog-intro">Browse all 45 designs, then pick Standard or Premium + Tree.</p>
+          <p class="catalog-intro">Browse all 28 designs, then pick Standard or Premium + Tree.</p>
         </div>
-        <p class="catalog-count" id="catalogCount" aria-live="polite">45 designs</p>
+        <p class="catalog-count" id="catalogCount" aria-live="polite">28 designs</p>
       </div>
 
       <div class="catalog-controls">

@@ -1,9 +1,10 @@
 :root {
   --page:#f7fbff; --white:#fff; --navy:#264b68; --slate:#35536a;
   --ice:#4f86af; --pale:#ddeefc; --border:#d9e9f6; --gold:#9a7022;
+  --spring:cubic-bezier(.22,1,.36,1);
 }
 * { box-sizing:border-box; }
-html { scroll-behavior:smooth; }
+html { scroll-behavior:smooth; scroll-padding-top:16px; }
 body { margin:0; min-width:320px; background:var(--page); color:var(--slate); font-family:"Mulish",Arial,sans-serif; }
 button,select,input { font:inherit; }
 a { color:inherit; text-decoration:none; }
@@ -36,12 +37,16 @@ a { color:inherit; text-decoration:none; }
   max-width:1440px; margin:32px auto 80px; padding:0 24px;
   display:grid; grid-template-columns:minmax(420px,1.25fr) minmax(300px,.78fr) 290px; gap:24px;
   align-items:start;
+  animation:product-enter 560ms var(--spring) both;
 }
+@keyframes product-enter { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
 .media-column { min-width:0; }
 .viewer {
   position:relative; height:620px; border:1px solid var(--border); border-radius:18px;
   overflow:hidden; background:radial-gradient(circle at 50% 42%,#fff 0,#eef7fd 68%,#dfeefa 100%);
+  box-shadow:0 14px 36px rgba(63,127,181,.07); transition:border-color 220ms ease,box-shadow 220ms ease;
 }
+.viewer:hover { border-color:#c3dced; box-shadow:0 18px 42px rgba(63,127,181,.11); }
 #globeCanvas { width:100%; height:100%; display:block; cursor:grab; }
 #globeCanvas:active { cursor:grabbing; }
 .viewer-tools {
@@ -49,9 +54,13 @@ a { color:inherit; text-decoration:none; }
 }
 .viewer-tools button, .thumb {
   border:1px solid var(--border); background:rgba(255,255,255,.94); color:var(--navy); cursor:pointer;
+  transition:transform 180ms var(--spring),border-color 180ms ease,background-color 180ms ease,box-shadow 180ms ease;
 }
 .viewer-tools button { width:42px; height:42px; border-radius:50%; }
-.viewer-tools button:hover, .thumb.active { border-color:var(--ice); background:var(--pale); }
+.viewer-tools button:hover { border-color:var(--ice); background:var(--pale); transform:translateY(-2px); box-shadow:0 6px 13px rgba(38,75,104,.12); }
+.viewer-tools button:active, .thumb:active { transform:scale(.96); }
+.thumb:hover { border-color:var(--ice); background:#f3f9fe; transform:translateY(-2px); }
+.thumb.active { border-color:var(--ice); background:var(--pale); box-shadow:inset 0 0 0 1px rgba(79,134,175,.12); }
 .viewer-caption {
   position:absolute; left:16px; bottom:14px; border-radius:18px; padding:8px 12px;
   background:rgba(255,255,255,.92); color:var(--navy); font-size:12px; font-weight:800;
@@ -78,13 +87,19 @@ a { color:inherit; text-decoration:none; }
 .option-button {
   min-height:42px; border:1px solid var(--border); border-radius:8px; background:var(--white);
   color:var(--slate); padding:0 12px; font-size:12px; font-weight:800; cursor:pointer;
+  transition:transform 180ms var(--spring),border-color 180ms ease,background-color 180ms ease,color 180ms ease,box-shadow 180ms ease;
 }
+.option-button:hover:not(:disabled) { border-color:#aacde6; background:#f2f8fd; color:var(--navy); transform:translateY(-2px); }
 .option-button.active { border:2px solid var(--navy); color:var(--navy); background:#edf6fd; }
+.option-button.active:hover { background:#e4f1fb; }
+.option-button:active:not(:disabled) { transform:scale(.97); }
 .option-button:disabled { opacity:.48; cursor:not-allowed; text-decoration:line-through; }
 .option-select {
   width:100%; height:44px; border:1px solid var(--border); border-radius:8px; background:var(--white);
-  color:var(--navy); padding:0 11px;
+  color:var(--navy); padding:0 11px; transition:border-color 180ms ease,box-shadow 180ms ease,background-color 180ms ease;
 }
+.option-select:hover { border-color:#aacde6; background:#fcfeff; }
+.option-select:focus-visible { border-color:var(--ice); box-shadow:0 0 0 3px rgba(79,134,175,.12); }
 .highlights { margin:20px 0 0; padding:18px 18px 18px 34px; border-top:1px solid var(--border); border-bottom:1px solid var(--border); }
 .highlights li { margin:7px 0; color:var(--slate); font-size:13px; }
 
@@ -106,10 +121,23 @@ a { color:inherit; text-decoration:none; }
 .quantity-row select { height:40px; min-width:82px; border:1px solid var(--border); border-radius:8px; background:var(--white); color:var(--navy); }
 .reserve-button {
   width:100%; height:48px; border:0; border-radius:24px; background:var(--navy); color:#fff;
-  font-size:13px; font-weight:800; cursor:pointer; transition:background 160ms ease,transform 160ms ease;
+  font-size:13px; font-weight:800; cursor:pointer;
+  transition:background-color 180ms ease,transform 180ms var(--spring),box-shadow 180ms ease;
 }
-.reserve-button:hover { background:var(--ice); transform:translateY(-1px); }
-.browse-link { display:block; margin-top:14px; text-align:center; color:var(--navy); font-size:13px; font-weight:800; }
+.reserve-button:hover { background:var(--ice); transform:translateY(-2px); box-shadow:0 8px 18px rgba(38,75,104,.17); }
+.reserve-button:active { transform:scale(.97); }
+.browse-link {
+  display:flex; align-items:center; justify-content:center; gap:4px; margin-top:14px;
+  text-align:center; color:var(--navy); font-size:13px; font-weight:800;
+}
+.browse-link span:first-child { position:relative; }
+.browse-link span:first-child::after {
+  content:""; position:absolute; right:0; bottom:-3px; left:0; height:1px; background:currentColor;
+  transform:scaleX(0); transform-origin:left; transition:transform 200ms var(--spring);
+}
+.browse-arrow { display:inline-block; transition:transform 180ms var(--spring); }
+.browse-link:hover span:first-child::after { transform:scaleX(1); }
+.browse-link:hover .browse-arrow { transform:translate(3px,-2px); }
 
 .no-webgl {
   position:absolute; inset:0; display:grid; place-content:center; text-align:center; padding:30px;
@@ -221,4 +249,6 @@ a { color:inherit; text-decoration:none; }
 }
 @media (prefers-reduced-motion:reduce) {
   html { scroll-behavior:auto; }
+  .product-page { animation:none; }
+  .viewer-tools button,.thumb,.option-button,.option-select,.reserve-button,.browse-link span:first-child::after,.browse-arrow,.viewer { transition:none; }
 }

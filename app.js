@@ -28,16 +28,31 @@ const heroTabs = document.getElementById("heroTabs");
 const productGrid = document.getElementById("productGrid");
 const catalogCount = document.getElementById("catalogCount");
 const hero = document.getElementById("hero");
+const catalog = document.getElementById("catalog");
 const themeFilters = [...document.querySelectorAll(".nav-box")];
+const themeIndicator = document.querySelector(".theme-indicator");
 const versionButtons = [...document.querySelectorAll(".version-button")];
-const searchButton = document.querySelector(".search");
-const searchPanel = document.getElementById("searchPanel");
+const searchForm = document.getElementById("catalogSearchForm");
 const globeSearch = document.getElementById("globeSearch");
+const clearSearchButton = document.getElementById("clearSearch");
+const searchSuggestions = document.getElementById("searchSuggestions");
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const revealObserver = !prefersReducedMotion && "IntersectionObserver" in window
+  ? new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("is-visible");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 })
+  : null;
 
 let currentTheme = "Penguin";
 let currentIndex = 0;
 let themeFilter = "All";
 let versionFilter = "All";
+let searchQuery = "";
 let visibleLimit = 9;
 let paused = false;
 let autoTimer = null;
@@ -78,6 +93,27 @@ function selectTheme(theme) {
   });
 }
 
+function updateThemeControls() {
+  const activeButton = themeFilters.find((button) => button.dataset.theme === themeFilter);
+  themeFilters.forEach((button) => {
+    const active = button === activeButton;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+  if (activeButton && themeIndicator) {
+    themeIndicator.style.left = `${activeButton.offsetLeft}px`;
+    themeIndicator.style.width = `${activeButton.offsetWidth}px`;
+  }
+}
+
+function updateVersionControls() {
+  versionButtons.forEach((button) => {
+    const active = button.dataset.version === versionFilter;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+}
+
 THEMES.forEach((theme) => {
   const tab = document.createElement("button");
   tab.type = "button";
@@ -89,41 +125,63 @@ THEMES.forEach((theme) => {
   heroTabs.appendChild(tab);
 });
 
+function matchesSearch(product, query) {
+  if (!query) return true;
+  const edition = product.hasTree ? "Premium + Tree" : "Standard";
+  return `${product.name} ${product.theme} ${product.finish} ${edition}`
+    .toLowerCase()
+    .includes(query.toLowerCase());
+}
+
+function createProductCard(product) {
+  const card = document.createElement("article");
+  card.className = `product-card catalog-reveal${searchQuery ? " search-match" : ""}`;
+  card.innerHTML = `
+    <a class="card-art" href="product.html?id=${encodeURIComponent(product.id)}" aria-label="View ${product.name}, ${product.finish}, ${product.version}">
+      ${renderGlobe(product)}
+    </a>
+    <div class="card-body">
+      <span class="card-theme">${product.theme}</span>
+      <h3 class="card-name">${product.name}</h3>
+      <div class="card-footer">
+        <span class="card-edition">${product.finish} · ${product.version}${product.hasTree ? " · with tree" : ""}</span>
+        <span class="card-price">${formatMoney(product.price)}</span>
+      </div>
+      <button class="card-preorder" type="button" data-preorder-product="${product.id}">Reserve</button>
+    </div>`;
+  if (revealObserver) revealObserver.observe(card);
+  else card.classList.add("is-visible");
+  return card;
+}
+
 function renderCatalog() {
   const filtered = products.filter((product) =>
     (themeFilter === "All" || product.theme === themeFilter) &&
-    (versionFilter === "All" || product.version === versionFilter)
+    (versionFilter === "All" || product.version === versionFilter) &&
+    matchesSearch(product, searchQuery)
   );
 
-  catalogCount.textContent = `${filtered.length} ${filtered.length === 1 ? "design" : "designs"}`;
-  productGrid.innerHTML = "";
+  catalogCount.textContent = searchQuery
+    ? `${filtered.length} ${filtered.length === 1 ? "match" : "matches"} for “${searchQuery}”`
+    : `${filtered.length} ${filtered.length === 1 ? "design" : "designs"}`;
+  productGrid.querySelectorAll(".catalog-reveal").forEach((card) => {
+    if (revealObserver) revealObserver.unobserve(card);
+  });
+  productGrid.replaceChildren();
+  const loadMore = document.getElementById("loadMore");
 
   if (!filtered.length) {
-    productGrid.innerHTML = `<p class="empty-state">No snow globes match these filters.</p>`;
+    const emptyState = document.createElement("p");
+    emptyState.className = "empty-state";
+    emptyState.textContent = searchQuery
+      ? `No globes match “${searchQuery}”. Try another theme or finish.`
+      : "No snow globes match these filters.";
+    productGrid.appendChild(emptyState);
+    loadMore.classList.add("hidden");
     return;
   }
 
-  filtered.slice(0, visibleLimit).forEach((product) => {
-    const card = document.createElement("article");
-    card.className = "product-card";
-    card.innerHTML = `
-      <a class="card-art" href="product.html?id=${encodeURIComponent(product.id)}" aria-label="View ${product.name}, ${product.finish}, ${product.version}">
-        ${renderGlobe(product)}
-      </a>
-      <div class="card-body">
-        <span class="card-theme">${product.theme}</span>
-        <h3 class="card-name">${product.name}</h3>
-        <div class="card-footer">
-          <span class="card-edition">${product.finish} · ${product.version}${product.hasTree ? " · with tree" : ""}</span>
-          <span class="card-price">${formatMoney(product.price)}</span>
-        </div>
-        <button class="card-preorder" type="button" data-preorder-product="${product.id}">Reserve</button>
-      </div>`;
-
-    productGrid.appendChild(card);
-  });
-
-  const loadMore = document.getElementById("loadMore");
+  filtered.slice(0, visibleLimit).forEach((product) => productGrid.appendChild(createProductCard(product)));
   loadMore.classList.toggle("hidden", visibleLimit >= filtered.length);
   loadMore.textContent = `Show more · ${Math.max(0, filtered.length - visibleLimit)} remaining`;
 }
@@ -132,9 +190,15 @@ themeFilters.forEach((button) => {
   button.addEventListener("click", () => {
     themeFilter = button.dataset.theme;
     visibleLimit = 9;
-    themeFilters.forEach((item) => item.classList.toggle("active", item === button));
+    searchQuery = "";
+    globeSearch.value = "";
+    hideSearchSuggestions();
+    clearSearchButton.hidden = true;
+    updateThemeControls();
+    updateBrowseUrl();
     if (themeFilter !== "All") selectTheme(themeFilter);
     renderCatalog();
+    scrollToCatalog();
   });
 });
 
@@ -142,11 +206,8 @@ versionButtons.forEach((button) => {
   button.addEventListener("click", () => {
     versionFilter = button.dataset.version;
     visibleLimit = 9;
-    versionButtons.forEach((item) => {
-      const active = item === button;
-      item.classList.toggle("active", active);
-      item.setAttribute("aria-pressed", String(active));
-    });
+    updateVersionControls();
+    updateBrowseUrl();
     renderCatalog();
   });
 });
@@ -154,7 +215,7 @@ versionButtons.forEach((button) => {
 function startAutoAdvance() {
   window.clearInterval(autoTimer);
   autoTimer = window.setInterval(() => {
-    if (!paused && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (!paused && !prefersReducedMotion) {
       const themeIndex = (THEMES.indexOf(currentTheme) + 1) % THEMES.length;
       selectTheme(THEMES[themeIndex]);
     }
@@ -166,77 +227,137 @@ hero.addEventListener("mouseleave", () => { paused = false; });
 hero.addEventListener("focusin", () => { paused = true; });
 hero.addEventListener("focusout", () => { paused = false; });
 
-document.addEventListener("keydown", (event) => {
-  if (event.key === "ArrowRight") {
-    selectTheme(THEMES[(THEMES.indexOf(currentTheme) + 1) % THEMES.length]);
-  } else if (event.key === "ArrowLeft") {
-    selectTheme(THEMES[(THEMES.indexOf(currentTheme) - 1 + THEMES.length) % THEMES.length]);
-  } else if (event.key === "Escape" && searchPanel.classList.contains("open")) {
-    closeSearch();
-  }
-});
-
-function closeSearch() {
-  searchPanel.classList.remove("open");
-  searchPanel.setAttribute("aria-hidden", "true");
-  searchButton.setAttribute("aria-expanded", "false");
+function scrollToCatalog() {
+  catalog.scrollIntoView({
+    behavior: prefersReducedMotion ? "auto" : "smooth",
+    block: "start"
+  });
 }
 
-searchButton.addEventListener("click", () => {
-  const opening = !searchPanel.classList.contains("open");
-  searchPanel.classList.toggle("open", opening);
-  searchPanel.setAttribute("aria-hidden", String(!opening));
-  searchButton.setAttribute("aria-expanded", String(opening));
-  if (opening) globeSearch.focus();
-});
+function updateBrowseUrl() {
+  const url = new URL(window.location.href);
+  if (searchQuery) url.searchParams.set("q", searchQuery);
+  else url.searchParams.delete("q");
+  if (themeFilter !== "All") url.searchParams.set("theme", themeFilter);
+  else url.searchParams.delete("theme");
+  if (versionFilter !== "All") url.searchParams.set("edition", versionFilter);
+  else url.searchParams.delete("edition");
+  window.history.replaceState({}, "", url.toString());
+}
 
-globeSearch.addEventListener("input", () => {
-  const query = globeSearch.value.trim().toLowerCase();
-  themeFilter = "All";
-  versionFilter = "All";
-  visibleLimit = 9;
-  versionButtons.forEach((button, index) => {
-    const active = index === 0;
-    button.classList.toggle("active", active);
-    button.setAttribute("aria-pressed", String(active));
-  });
-  themeFilters.forEach((button) => button.classList.toggle("active", button.dataset.theme === "All"));
+function hideSearchSuggestions() {
+  searchSuggestions.hidden = true;
+  globeSearch.setAttribute("aria-expanded", "false");
+}
 
+function updateSearchSuggestions() {
+  const query = globeSearch.value.trim();
+  clearSearchButton.hidden = !query;
+  searchSuggestions.replaceChildren();
   if (!query) {
-    renderCatalog();
+    hideSearchSuggestions();
     return;
   }
 
-  const filtered = products.filter((product) =>
-    `${product.name} ${product.theme} ${product.finish} ${product.version}`.toLowerCase().includes(query)
-  );
-  catalogCount.textContent = `${filtered.length} ${filtered.length === 1 ? "design" : "designs"}`;
-  productGrid.innerHTML = filtered.length
-    ? ""
-    : `<p class="empty-state">No snow globes match "${globeSearch.value}".</p>`;
-
-  filtered.slice(0, visibleLimit).forEach((product) => {
-    const card = document.createElement("article");
-    card.className = "product-card";
-    card.innerHTML = `
-      <a class="card-art" href="product.html?id=${encodeURIComponent(product.id)}" aria-label="View ${product.name}, ${product.finish}, ${product.version}">
-        ${renderGlobe(product)}
-      </a>
-      <div class="card-body">
-        <span class="card-theme">${product.theme}</span>
-        <h3 class="card-name">${product.name}</h3>
-        <div class="card-footer">
-          <span class="card-edition">${product.finish} · ${product.version}${product.hasTree ? " · with tree" : ""}</span>
-          <span class="card-price">${formatMoney(product.price)}</span>
-        </div>
-        <button class="card-preorder" type="button" data-preorder-product="${product.id}">Reserve</button>
-      </div>`;
-    productGrid.appendChild(card);
+  const matches = products.filter((product) => matchesSearch(product, query)).slice(0, 6);
+  matches.forEach((product) => {
+    const suggestion = document.createElement("button");
+    suggestion.type = "button";
+    suggestion.className = "search-suggestion";
+    suggestion.setAttribute("role", "option");
+    suggestion.dataset.searchSuggestion = product.name;
+    suggestion.textContent = `${product.name} · ${product.finish} · ${product.hasTree ? "Premium + Tree" : "Standard"}`;
+    searchSuggestions.appendChild(suggestion);
   });
+  searchSuggestions.hidden = matches.length === 0;
+  globeSearch.setAttribute("aria-expanded", String(matches.length > 0));
+}
 
-  document.getElementById("loadMore").classList.toggle("hidden", !filtered.length || visibleLimit >= filtered.length);
-  document.getElementById("loadMore").textContent = `Show more · ${Math.max(0, filtered.length - visibleLimit)} remaining`;
+function updateSearchFilter() {
+  searchQuery = globeSearch.value.trim();
+  themeFilter = "All";
+  versionFilter = "All";
+  visibleLimit = 9;
+  updateThemeControls();
+  updateVersionControls();
+  updateSearchSuggestions();
+  renderCatalog();
+  updateBrowseUrl();
+}
+
+function applySearch(query) {
+  globeSearch.value = query.trim();
+  updateSearchFilter();
+  hideSearchSuggestions();
+  updateBrowseUrl();
+  scrollToCatalog();
+}
+
+searchForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  applySearch(globeSearch.value);
 });
+
+globeSearch.addEventListener("input", updateSearchFilter);
+globeSearch.addEventListener("keydown", (event) => {
+  if (event.key === "ArrowDown" && !searchSuggestions.hidden) {
+    event.preventDefault();
+    searchSuggestions.querySelector(".search-suggestion")?.focus();
+  } else if (event.key === "Escape") {
+    hideSearchSuggestions();
+  }
+});
+
+searchSuggestions.addEventListener("click", (event) => {
+  const suggestion = event.target.closest(".search-suggestion");
+  if (suggestion) applySearch(suggestion.dataset.searchSuggestion);
+});
+
+searchSuggestions.addEventListener("keydown", (event) => {
+  const suggestions = [...searchSuggestions.querySelectorAll(".search-suggestion")];
+  const currentIndex = suggestions.indexOf(document.activeElement);
+  if (event.key === "ArrowDown" && currentIndex < suggestions.length - 1) {
+    event.preventDefault();
+    suggestions[currentIndex + 1].focus();
+  } else if (event.key === "ArrowUp") {
+    event.preventDefault();
+    if (currentIndex > 0) suggestions[currentIndex - 1].focus();
+    else globeSearch.focus();
+  } else if (event.key === "Escape") {
+    hideSearchSuggestions();
+    globeSearch.focus();
+  }
+});
+
+clearSearchButton.addEventListener("click", () => {
+  globeSearch.value = "";
+  updateSearchFilter();
+  hideSearchSuggestions();
+  scrollToCatalog();
+  globeSearch.focus();
+});
+
+document.addEventListener("click", (event) => {
+  if (!searchForm.contains(event.target)) hideSearchSuggestions();
+});
+
+document.addEventListener("keydown", (event) => {
+  const target = event.target;
+  const editing = target instanceof HTMLElement &&
+    (target.isContentEditable || target.matches("input, textarea, select"));
+  const interactive = target instanceof HTMLElement && target.closest("button, a, [role='option']");
+
+  if (event.key === "/" && !editing && !document.querySelector("dialog[open]")) {
+    event.preventDefault();
+    globeSearch.focus();
+  } else if (!editing && !interactive && event.key === "ArrowRight") {
+    selectTheme(THEMES[(THEMES.indexOf(currentTheme) + 1) % THEMES.length]);
+  } else if (!editing && !interactive && event.key === "ArrowLeft") {
+    selectTheme(THEMES[(THEMES.indexOf(currentTheme) - 1 + THEMES.length) % THEMES.length]);
+  }
+});
+
+window.addEventListener("resize", updateThemeControls);
 
 document.getElementById("previousProduct").addEventListener("click", () => {
   selectTheme(THEMES[(THEMES.indexOf(currentTheme) - 1 + THEMES.length) % THEMES.length]);
@@ -257,6 +378,23 @@ document.getElementById("heroPreorder").addEventListener("click", () => {
   }));
 });
 
-selectTheme("Penguin");
+const initialParams = new URLSearchParams(window.location.search);
+const initialTheme = initialParams.get("theme");
+const initialEdition = initialParams.get("edition");
+searchQuery = initialParams.get("q")?.trim() || "";
+themeFilter = THEMES.includes(initialTheme) ? initialTheme : "All";
+versionFilter = ["Standard", "Premium"].includes(initialEdition) ? initialEdition : "All";
+if (searchQuery) {
+  themeFilter = "All";
+  versionFilter = "All";
+}
+globeSearch.value = searchQuery;
+clearSearchButton.hidden = !searchQuery;
+updateThemeControls();
+updateVersionControls();
+selectTheme(themeFilter === "All" ? "Penguin" : themeFilter);
 renderCatalog();
+if (searchQuery || themeFilter !== "All" || versionFilter !== "All") {
+  window.requestAnimationFrame(scrollToCatalog);
+}
 startAutoAdvance();
