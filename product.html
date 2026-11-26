@@ -9,14 +9,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Federo&family=Mulish:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="product.css">
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
-      }
-    }
-  </script>
 </head>
 <body>
   <header class="topbar">
@@ -35,24 +27,23 @@
   <p class="product-notice" id="productNotice" role="status" hidden></p>
 
   <main class="product-page">
-    <section class="media-column" aria-label="Snow globe 3D gallery">
-      <div class="viewer" id="viewer">
-        <canvas id="globeCanvas" aria-label="Interactive 3D snow globe"></canvas>
-        <div class="viewer-tools">
-          <button type="button" id="zoomOut" aria-label="Zoom out">−</button>
-          <button type="button" id="resetCamera" aria-label="Reset 3D camera">↻</button>
-          <button type="button" id="zoomIn" aria-label="Zoom in">+</button>
-        </div>
-        <span class="viewer-caption" id="viewerCaption">3D View</span>
-      </div>
-
-      <div class="media-strip" role="list" aria-label="Product views">
-        <button class="thumb active" type="button" data-view="full" role="listitem"><span class="thumb-symbol">●</span>3D View</button>
-        <button class="thumb" type="button" data-view="inside" role="listitem"><span class="thumb-symbol">✦</span>Inside Globe</button>
-        <button class="thumb" type="button" data-view="base" role="listitem"><span class="thumb-symbol">▣</span>Base &amp; Detail</button>
-        <button class="thumb" type="button" data-view="winter" role="listitem"><span class="thumb-symbol">❄</span>Winter Scene</button>
-      </div>
+    <section class="media-column" aria-label="Product image gallery">
+      <button class="gallery-stage" id="galleryOpen" type="button" aria-label="Open product image in full screen">
+        <img class="gallery-image" id="galleryImage" alt="">
+        <span class="gallery-zoom-hint" aria-hidden="true">Hover to zoom · Click to enlarge</span>
+        <span class="viewer-caption" id="viewerCaption">Main Globe View</span>
+      </button>
+      <div class="media-strip" id="mediaStrip" role="group" aria-label="Product images"></div>
     </section>
+
+    <dialog class="gallery-lightbox" id="galleryLightbox" aria-label="Product image viewer">
+      <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Close image viewer">×</button>
+      <button class="lightbox-arrow lightbox-previous" id="lightboxPrevious" type="button" aria-label="Previous image">‹</button>
+      <img class="lightbox-image" id="lightboxImage" alt="">
+      <button class="lightbox-arrow lightbox-next" id="lightboxNext" type="button" aria-label="Next image">›</button>
+      <p class="lightbox-caption" id="lightboxCaption"></p>
+      <p class="lightbox-help">Use ← and → to browse · Esc to close</p>
+    </dialog>
 
     <section class="product-details" aria-labelledby="productTitle">
       <span class="theme-badge" id="themeBadge">Penguin</span>
@@ -107,7 +98,7 @@
       </div>
       <button class="reserve-button" type="button" id="reserveButton">Reserve this globe</button>
       <p class="reservation-status" id="reservationStatus" role="status" aria-live="polite"></p>
-      <a class="browse-link" href="index.html#catalog"><span>Browse all 28 designs</span><span class="browse-arrow" aria-hidden="true">↗</span></a>
+      <a class="browse-link" href="index.html#catalog"><span>Browse all designs</span><span class="browse-arrow" aria-hidden="true">↗</span></a>
     </aside>
   </main>
 
@@ -172,7 +163,7 @@
     </div>
   </dialog>
 
-  <script type="module" src="product-3d.js"></script>
+  <script type="module" src="product-gallery.js"></script>
   <script type="module" src="preorder.js"></script>
 </body>
 </html>
