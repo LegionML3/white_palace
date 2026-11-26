@@ -1,5 +1,4 @@
-import { CATALOG_ITEMS, PRICING_CONFIG, getItemPrice } from "./data.js";
-import { renderGlobe } from "./globe-art.js";
+import { CATALOG_ITEMS, PRICING_CONFIG, getItemPrice, getProductImages, getProductPlaceholderImage } from "./data.js";
 
 // Showcase and catalog interactions.
 const products = CATALOG_ITEMS.map((item) => ({
@@ -63,6 +62,19 @@ function formatMoney(value) {
   return `${PRICING_CONFIG.currencySymbol}${value.toFixed(2)}`;
 }
 
+function createProductImage(product, imageUrl, className) {
+  const image = document.createElement("img");
+  image.className = className;
+  image.src = imageUrl;
+  image.alt = product.name;
+  image.loading = "lazy";
+  image.decoding = "async";
+  image.addEventListener("error", () => {
+    image.src = getProductPlaceholderImage({ ...product, id: "", images: [] });
+  }, { once: true });
+  return image;
+}
+
 function renderHeroProduct(product) {
   if (!product) return;
   globeArt.classList.add("changing");
@@ -74,7 +86,9 @@ function renderHeroProduct(product) {
     outlineWord.textContent = themeOutlines[product.theme];
     price.textContent = formatMoney(product.price);
     counterCurrent.textContent = String(currentIndex + 1).padStart(2, "0");
-    globeArt.innerHTML = renderGlobe(product);
+    const imageUrl = getProductImages(product)[0];
+    globeArt.classList.toggle("is-photo", !imageUrl.startsWith("data:image/svg+xml"));
+    globeArt.replaceChildren(createProductImage(product, imageUrl, "product-art-image"));
     globeArt.classList.remove("changing");
     outlineWord.classList.remove("changing");
   }, 220);
@@ -138,7 +152,6 @@ function createProductCard(product) {
   card.className = `product-card catalog-reveal${searchQuery ? " search-match" : ""}`;
   card.innerHTML = `
     <a class="card-art" href="product.html?id=${encodeURIComponent(product.id)}" aria-label="View ${product.name}, ${product.finish}, ${product.version}">
-      ${renderGlobe(product)}
     </a>
     <div class="card-body">
       <span class="card-theme">${product.theme}</span>
@@ -149,6 +162,9 @@ function createProductCard(product) {
       </div>
       <button class="card-preorder" type="button" data-preorder-product="${product.id}">Reserve</button>
     </div>`;
+  card.querySelector(".card-art").appendChild(
+    createProductImage(product, getProductImages(product)[0], "product-art-image")
+  );
   if (revealObserver) revealObserver.observe(card);
   else card.classList.add("is-visible");
   return card;

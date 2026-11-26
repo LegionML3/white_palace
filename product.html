@@ -9,14 +9,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Federo&family=Mulish:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="product.css">
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
-      }
-    }
-  </script>
 </head>
 <body>
   <header class="topbar">
@@ -35,23 +27,8 @@
   <p class="product-notice" id="productNotice" role="status" hidden></p>
 
   <main class="product-page">
-    <section class="media-column" aria-label="Snow globe 3D gallery">
-      <div class="viewer" id="viewer">
-        <canvas id="globeCanvas" aria-label="Interactive 3D snow globe"></canvas>
-        <div class="viewer-tools">
-          <button type="button" id="zoomOut" aria-label="Zoom out">−</button>
-          <button type="button" id="resetCamera" aria-label="Reset 3D camera">↻</button>
-          <button type="button" id="zoomIn" aria-label="Zoom in">+</button>
-        </div>
-        <span class="viewer-caption" id="viewerCaption">3D View</span>
-      </div>
-
-      <div class="media-strip" role="list" aria-label="Product views">
-        <button class="thumb active" type="button" data-view="full" role="listitem"><span class="thumb-symbol">●</span>3D View</button>
-        <button class="thumb" type="button" data-view="inside" role="listitem"><span class="thumb-symbol">✦</span>Inside Globe</button>
-        <button class="thumb" type="button" data-view="base" role="listitem"><span class="thumb-symbol">▣</span>Base &amp; Detail</button>
-        <button class="thumb" type="button" data-view="winter" role="listitem"><span class="thumb-symbol">❄</span>Winter Scene</button>
-      </div>
+    <section class="media-column" aria-label="Snow globe product gallery">
+      <div class="product-gallery" id="productGallery" aria-label="Product photos"></div>
     </section>
 
     <section class="product-details" aria-labelledby="productTitle">
@@ -172,7 +149,7 @@
     </div>
   </dialog>
 
-  <script type="module" src="product-3d.js"></script>
+  <script type="module" src="product-page.js"></script>
   <script type="module" src="preorder.js"></script>
 </body>
 </html>
