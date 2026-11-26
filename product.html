@@ -27,9 +27,23 @@
   <p class="product-notice" id="productNotice" role="status" hidden></p>
 
   <main class="product-page">
-    <section class="media-column" aria-label="Snow globe product gallery">
-      <div class="product-gallery" id="productGallery" aria-label="Product photos"></div>
+    <section class="media-column" aria-label="Product image gallery">
+      <button class="gallery-stage" id="galleryOpen" type="button" aria-label="Open product image in full screen">
+        <img class="gallery-image" id="galleryImage" alt="">
+        <span class="gallery-zoom-hint" aria-hidden="true">Hover to zoom · Click to enlarge</span>
+        <span class="gallery-caption" id="galleryCaption">Main Globe View</span>
+      </button>
+      <div class="media-strip" id="mediaStrip" role="group" aria-label="Product images"></div>
     </section>
+
+    <dialog class="gallery-lightbox" id="galleryLightbox" aria-label="Product image viewer">
+      <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Close image viewer">×</button>
+      <button class="lightbox-arrow lightbox-previous" id="lightboxPrevious" type="button" aria-label="Previous image">‹</button>
+      <img class="lightbox-image" id="lightboxImage" alt="">
+      <button class="lightbox-arrow lightbox-next" id="lightboxNext" type="button" aria-label="Next image">›</button>
+      <p class="lightbox-caption" id="lightboxCaption"></p>
+      <p class="lightbox-help">Use ← and → to browse · Esc to close</p>
+    </dialog>
 
     <section class="product-details" aria-labelledby="productTitle">
       <span class="theme-badge" id="themeBadge">Penguin</span>
@@ -84,7 +98,7 @@
       </div>
       <button class="reserve-button" type="button" id="reserveButton">Reserve this globe</button>
       <p class="reservation-status" id="reservationStatus" role="status" aria-live="polite"></p>
-      <a class="browse-link" href="index.html#catalog"><span>Browse all 28 designs</span><span class="browse-arrow" aria-hidden="true">↗</span></a>
+      <a class="browse-link" href="index.html#catalog"><span>Browse all designs</span><span class="browse-arrow" aria-hidden="true">↗</span></a>
     </aside>
   </main>
 
